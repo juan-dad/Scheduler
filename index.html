@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>진료 스케줄러 v5</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -120,6 +122,20 @@
             background: #f0f7ff;
         }
 
+        .calendar-day-header.weekend.red,
+        .calendar-day.weekend.red {
+            color: #ff6b6b;
+        }
+
+        .calendar-day-header.weekend.blue,
+        .calendar-day.weekend.blue {
+            color: #1976d2;
+        }
+
+        .calendar-day.selected-week {
+            background: #FFF8B6;
+        }
+
         .calendar-day.selected {
             background: #e3f2fd;
             color: #1976d2;
@@ -135,108 +151,132 @@
             color: #ff6b6b;
         }
 
+        /* 주간 기본 일정 섹션 */
+        .weekly-schedule-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e8eb;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .weekly-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .weekly-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #2c3744;
+        }
+
+        .weekly-btn:hover {
+            background: #f8f9fa;
+        }
+
         /* 진료항목 섹션 */
         .treatment-section {
             flex: 1;
             padding: 16px 20px;
             display: flex;
             flex-direction: column;
+            gap: 10px;
         }
 
-        .section-title {
-            font-size: 12px;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .section-header .section-title {
+            margin-bottom: 0;
+        }
+
+        .settings-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
             color: #666;
-            margin-bottom: 12px;
         }
 
-        .treatment-item {
+        .settings-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .treatment-item-box {
             display: flex;
             align-items: center;
-            padding: 12px 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #f0f2f4;
             cursor: pointer;
-            border-bottom: 1px solid #f0f2f4;
-        }
-
-        .treatment-item:last-child {
-            border-bottom: none;
-        }
-
-        .treatment-radio {
-            width: 16px;
-            height: 16px;
-            border: 2px solid #d4d9dc;
-            border-radius: 50%;
-            margin-right: 12px;
-            position: relative;
-        }
-
-        .treatment-radio.selected {
-            border-color: #1976d2;
-            background: #1976d2;
-        }
-
-        .treatment-radio.selected::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 8px;
-            height: 8px;
+            gap: 12px;
             background: white;
-            border-radius: 50%;
+            transition: all 0.2s;
         }
 
-        .treatment-info {
-            flex: 1;
+        .treatment-item-box.selected {
+            border-color: #fdd835;
+            background: #fffde7;
+        }
+
+        .treatment-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .treatment-badge.blue {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .treatment-badge.red {
+            background: #ffebee;
+            color: #c2185b;
+        }
+
+        .treatment-icon {
+            font-size: 14px;
+            width: 32px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .treatment-item-box.delete-mode {
+            background: #f5f5f5;
+        }
+
+        .treatment-item-box.delete-mode.selected {
+            border-color: #9e9e9e;
+            background: #eeeeee;
         }
 
         .treatment-name {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             color: #2c3744;
-            margin-bottom: 2px;
-        }
-
-        .treatment-desc {
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* 진료 유형 색상 범례 */
-        .treatment-legend {
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #e5e8eb;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
-            margin-right: 8px;
-        }
-
-        .legend-color.general {
-            background: #42a5f5;
-        }
-
-        .legend-color.pediatric {
-            background: #ec407a;
-        }
-
-        .legend-color.seasonal {
-            background: #bdbdbd;
-        }
-
-        .legend-text {
-            font-size: 11px;
-            color: #666;
         }
 
         /* 하단 설정 영역 */
@@ -293,7 +333,6 @@
 
         /* 주간 헤더 */
         .week-header {
-            height: 100px;
             background: #ffffff;
             border-bottom: 1px solid #e5e8eb;
             display: flex;
@@ -305,29 +344,45 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border-bottom: 1px solid #e5e8eb;
+        }
+
+        .week-title-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .week-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             color: #2c3744;
+            margin: 0;
         }
 
-        .week-range {
-            font-size: 12px;
+        .week-nav {
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .week-capacity {
+            font-size: 13px;
             color: #666;
+            margin-left: 16px;
         }
 
         .date-headers {
             display: flex;
             height: 60px;
-            border-top: 1px solid #e5e8eb;
         }
 
         .time-column-header {
             width: 80px;
             background: #f8f9fa;
             border-right: 1px solid #e5e8eb;
+            flex-shrink: 0;
         }
 
         .date-column {
@@ -336,42 +391,61 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-        
+            justify-content: space-between;
+            padding: 0 12px;
         }
 
         .date-column:last-child {
             border-right: none;
         }
 
-        .date-number {
-            font-size: 20px;
+        .date-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .date-text .num {
+            font-size: 16px;
             font-weight: 700;
             color: #2c3744;
-            margin-bottom: 2px;
+            margin-left: 4px;
         }
 
-        .date-day {
-            font-size: 11px;
-            color: #666;
-            margin-left: 8px;
-        }
-
-        .date-column.today .date-number {
+        .date-column.weekend.red .num,
+        .date-column.weekend.red .date-text {
             color: #ff6b6b;
         }
 
-        .date-column.weekend .date-number {
+        .date-column.weekend.blue .num,
+        .date-column.weekend.blue .date-text {
             color: #1976d2;
+        }
+
+        .copy-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .copy-btn:hover {
+            background: #f8f9fa;
         }
 
         /* 스케줄 그리드 영역 */
         .schedule-content {
             flex: 1;
-            display: flex;
             overflow-y: auto;
             position: relative;
+        }
+
+        .schedule-scroll-wrapper {
+            display: flex;
+            min-height: 100%;
         }
 
         .time-column {
@@ -379,10 +453,12 @@
             background: #f8f9fa;
             border-right: 1px solid #e5e8eb;
             position: relative;
+            flex-shrink: 0;
         }
 
         .time-slot {
-            height: 60px; /* 30분 = 60px (5분=10px 기준) */
+            height: 60px;
+            /* 30분 = 60px (5분=10px 기준) */
             border-bottom: 1px solid #e5e8eb;
             display: flex;
             align-items: center;
@@ -463,7 +539,7 @@
         }
 
         .schedule-block.pediatric {
-            background: #f48fb1 ;
+            background: #f48fb1;
             border-color: #c2185b;
         }
 
@@ -474,7 +550,7 @@
 
         .schedule-block:hover {
             transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             z-index: 20;
             transition: all 0.2s ease;
         }
@@ -551,6 +627,7 @@
                 background: rgba(255, 68, 68, 0.2);
                 border-color: #ff6666;
             }
+
             100% {
                 background: rgba(255, 68, 68, 0.4);
                 border-color: #ff2222;
@@ -562,10 +639,12 @@
                 opacity: 0;
                 transform: scale(0.8);
             }
+
             50% {
                 opacity: 1;
                 transform: scale(1.1);
             }
+
             100% {
                 opacity: 0;
                 transform: scale(1);
@@ -609,7 +688,8 @@
             display: block;
         }
 
-        .form-select, .form-input {
+        .form-select,
+        .form-input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -708,6 +788,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="scheduler-container">
         <!-- 좌측 사이드바 -->
@@ -724,115 +805,85 @@
                     <div class="calendar-title">2025년 7월</div>
                     <div class="calendar-nav next">›</div>
                 </div>
-                
+
                 <div class="calendar-grid">
-                    <div class="calendar-day-header">일</div>
                     <div class="calendar-day-header">월</div>
                     <div class="calendar-day-header">화</div>
                     <div class="calendar-day-header">수</div>
                     <div class="calendar-day-header">목</div>
                     <div class="calendar-day-header">금</div>
-                    <div class="calendar-day-header">토</div>
-                    
-                    <div class="calendar-day other-month">29</div>
-                    <div class="calendar-day other-month">30</div>
-                    <div class="calendar-day">1</div>
-                    <div class="calendar-day">2</div>
+                    <div class="calendar-day-header weekend blue">토</div>
+                    <div class="calendar-day-header weekend red">일</div>
+
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day weekend blue">1</div>
+                    <div class="calendar-day weekend red">2</div>
+
                     <div class="calendar-day">3</div>
                     <div class="calendar-day">4</div>
                     <div class="calendar-day">5</div>
-                    
                     <div class="calendar-day">6</div>
                     <div class="calendar-day">7</div>
-                    <div class="calendar-day">8</div>
-                    <div class="calendar-day">9</div>
+                    <div class="calendar-day weekend blue">8</div>
+                    <div class="calendar-day weekend red">9</div>
+
                     <div class="calendar-day">10</div>
                     <div class="calendar-day">11</div>
                     <div class="calendar-day">12</div>
-                    
                     <div class="calendar-day">13</div>
                     <div class="calendar-day">14</div>
-                    <div class="calendar-day">15</div>
-                    <div class="calendar-day">16</div>
-                    <div class="calendar-day">17</div>
-                    <div class="calendar-day">18</div>
-                    <div class="calendar-day">19</div>
-                    
-                    <div class="calendar-day">20</div>
-                    <div class="calendar-day">21</div>
-                    <div class="calendar-day">22</div>
-                    <div class="calendar-day">23</div>
+                    <div class="calendar-day weekend blue">15</div>
+                    <div class="calendar-day weekend red">16</div>
+
+                    <div class="calendar-day selected-week">17</div>
+                    <div class="calendar-day selected-week">18</div>
+                    <div class="calendar-day selected-week">19</div>
+                    <div class="calendar-day selected-week">20</div>
+                    <div class="calendar-day selected-week">21</div>
+                    <div class="calendar-day selected-week weekend blue">22</div>
+                    <div class="calendar-day selected-week weekend red">23</div>
+
                     <div class="calendar-day">24</div>
                     <div class="calendar-day">25</div>
                     <div class="calendar-day">26</div>
-                    
                     <div class="calendar-day">27</div>
                     <div class="calendar-day">28</div>
-                    <div class="calendar-day">29</div>
-                    <div class="calendar-day today selected">30</div>
+                    <div class="calendar-day weekend blue">29</div>
+                    <div class="calendar-day weekend red">30</div>
+
                     <div class="calendar-day">31</div>
-                    <div class="calendar-day other-month">1</div>
-                    <div class="calendar-day other-month">2</div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
                 </div>
             </div>
 
             <!-- 진료항목 선택 -->
             <div class="treatment-section">
-                <div class="section-title">추가 기능 입력 +</div>
-                
-                <div class="treatment-item" data-treatment="general">
-                    <div class="treatment-radio selected"></div>
-                    <div class="treatment-info">
-                        <div class="treatment-name">일반진료</div>
-                        <div class="treatment-desc">5분</div>
-                    </div>
-                </div>
-                
-                <div class="treatment-item" data-treatment="pediatric">
-                    <div class="treatment-radio"></div>
-                    <div class="treatment-info">
-                        <div class="treatment-name">영유아검진</div>
-                        <div class="treatment-desc">15분</div>
-                    </div>
-                </div>
-                
-                <div class="treatment-item" data-treatment="delete">
-                    <div class="treatment-radio"></div>
-                    <div class="treatment-info">
-                        <div class="treatment-name">삭제</div>
-                        <div class="treatment-desc">블럭 삭제</div>
-                    </div>
+                <div class="section-header">
+                    <div class="section-title">진료항목</div>
+                    <button class="settings-btn">설정</button>
                 </div>
 
-                <!-- 진료 유형 범례 -->
-                <div class="treatment-legend">
-                    <div class="legend-item">
-                        <div class="legend-color general"></div>
-                        <span class="legend-text">일반진료 5분</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color pediatric"></div>
-                        <span class="legend-text">영유아검진 15분</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color seasonal"></div>
-                        <span class="legend-text">삭제 모드</span>
-                    </div>
+                <div class="treatment-item-box selected" data-treatment="general">
+                    <span class="treatment-name">일반진료</span>
+                </div>
+
+                <div class="treatment-item-box" data-treatment="pediatric">
+                    <span class="treatment-name">알레르기 클리닉</span>
+                </div>
+
+                <div class="treatment-item-box delete-mode" data-treatment="delete">
+                    <span class="treatment-name">삭제하기</span>
                 </div>
             </div>
-
-            <!-- 하단 설정 -->
-            <!-- <div class="bottom-settings">
-                <div class="setting-group">
-                    <div class="setting-label">진료명</div>
-                    <input type="text" class="setting-input" placeholder="진료 내용 입력">
-                </div>
-                
-                <div class="setting-buttons">
-                    <button class="setting-btn">문턱하기</button>
-                    <button class="setting-btn">저장하기</button>
-                </div>
-            </div> -->
         </div>
 
         <!-- 메인 스케줄 영역 -->
@@ -840,81 +891,85 @@
             <!-- 주간 헤더 -->
             <div class="week-header">
                 <div class="week-info">
-                    <div>
-                        <div class="week-title">7월 28일 ~ 8월 3일</div>
-                        <div class="week-range">예약 가능 인원 수: 120명</div>
+                    <div class="week-title-row">
+                        <span class="week-nav prev">‹</span>
+                        <h2 class="week-title">9월 17일 ~ 23일</h2>
+                        <span class="week-nav next">›</span>
+                        <span class="week-capacity">예약 가능 인원 수 120명</span>
                     </div>
                 </div>
-                
+
                 <div class="date-headers">
                     <div class="time-column-header"></div>
                     <div class="date-column">
-                        <div class="date-number">28</div>
-                        <div class="date-day">월</div>
+                        <div class="date-text">월 <span class="num">17</span></div>
+                        <button class="copy-btn">복사</button>
                     </div>
                     <div class="date-column">
-                        <div class="date-number">29</div>
-                        <div class="date-day">화</div>
-                    </div>
-                    <div class="date-column today">
-                        <div class="date-number">30</div>
-                        <div class="date-day">수</div>
+                        <div class="date-text">화 <span class="num">18</span></div>
+                        <button class="copy-btn">복사</button>
                     </div>
                     <div class="date-column">
-                        <div class="date-number">31</div>
-                        <div class="date-day">목</div>
+                        <div class="date-text">수 <span class="num">19</span></div>
+                        <button class="copy-btn">복사</button>
                     </div>
                     <div class="date-column">
-                        <div class="date-number">1</div>
-                        <div class="date-day">금</div>
+                        <div class="date-text">목 <span class="num">20</span></div>
+                        <button class="copy-btn">복사</button>
                     </div>
-                    <div class="date-column weekend">
-                        <div class="date-number">2</div>
-                        <div class="date-day">토</div>
+                    <div class="date-column">
+                        <div class="date-text">금 <span class="num">21</span></div>
+                        <button class="copy-btn">복사</button>
                     </div>
-                    <div class="date-column weekend">
-                        <div class="date-number">3</div>
-                        <div class="date-day">일</div>
+                    <div class="date-column weekend blue">
+                        <div class="date-text">토 <span class="num">22</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
+                    <div class="date-column weekend red">
+                        <div class="date-text">일 <span class="num">23</span></div>
+                        <button class="copy-btn">복사</button>
                     </div>
                 </div>
             </div>
 
             <!-- 스케줄 컨텐츠 -->
             <div class="schedule-content">
-                <!-- 시간 컬럼 -->
-                <div class="time-column" id="timeColumn">
-                    <!-- 시간 슬롯들이 동적으로 생성됩니다 -->
-                </div>
+                <div class="schedule-scroll-wrapper">
+                    <!-- 시간 컬럼 -->
+                    <div class="time-column" id="timeColumn">
+                        <!-- 시간 슬롯들이 동적으로 생성됩니다 -->
+                    </div>
 
-                <!-- 스케줄 그리드 -->
-                <div class="schedule-grid">
-                    <!-- 각 요일별 컬럼 -->
-                    <div class="day-column" data-day="0">
-                        <div class="hour-lines"></div>
-                    </div>
-                    
-                    <div class="day-column" data-day="1">
-                        <div class="hour-lines"></div>
-                    </div>
-                    
-                    <div class="day-column" data-day="2">
-                        <div class="hour-lines"></div>
-                    </div>
-                    
-                    <div class="day-column" data-day="3">
-                        <div class="hour-lines"></div>
-                    </div>
-                    
-                    <div class="day-column" data-day="4">
-                        <div class="hour-lines"></div>
-                    </div>
-                    
-                    <div class="day-column" data-day="5">
-                        <div class="hour-lines"></div>
-                    </div>
-                    
-                    <div class="day-column" data-day="6">
-                        <div class="hour-lines"></div>
+                    <!-- 스케줄 그리드 -->
+                    <div class="schedule-grid">
+                        <!-- 각 요일별 컬럼 -->
+                        <div class="day-column" data-day="0">
+                            <div class="hour-lines"></div>
+                        </div>
+
+                        <div class="day-column" data-day="1">
+                            <div class="hour-lines"></div>
+                        </div>
+
+                        <div class="day-column" data-day="2">
+                            <div class="hour-lines"></div>
+                        </div>
+
+                        <div class="day-column" data-day="3">
+                            <div class="hour-lines"></div>
+                        </div>
+
+                        <div class="day-column" data-day="4">
+                            <div class="hour-lines"></div>
+                        </div>
+
+                        <div class="day-column" data-day="5">
+                            <div class="hour-lines"></div>
+                        </div>
+
+                        <div class="day-column" data-day="6">
+                            <div class="hour-lines"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -922,7 +977,6 @@
             <!-- 하단 액션 버튼 -->
             <div class="action-footer">
                 <div class="footer-left">
-                    <button class="footer-btn outline">미리보기</button>
                 </div>
                 <div>
                     <button class="footer-btn cancel">취소</button>
@@ -947,7 +1001,7 @@
         // 치료 유형 정보
         const treatmentTypes = {
             general: { name: '일반진료', duration: 5, height: 10, color: 'general' },
-            pediatric: { name: '영유아검진', duration: 15, height: 30, color: 'pediatric' },
+            pediatric: { name: '알레르기 클리닉', duration: 15, height: 30, color: 'pediatric' },
             delete: { name: '삭제', duration: 0, height: 0, color: 'seasonal' }
         };
 
@@ -955,7 +1009,7 @@
         function snapToPosition(pixels) {
             return Math.round(pixels / 10) * 10;
         }
-        
+
         // 크기 스냅핑 (블럭 높이) - 치료 유형에 따라
         function snapToTreatmentSize(pixels) {
             const treatment = treatmentTypes[selectedTreatment];
@@ -978,52 +1032,66 @@
             return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
         }
 
+        // 전체 예약 가능 인원 수 업데이트
+        function updateTotalCapacity() {
+            let total = 0;
+            document.querySelectorAll('.schedule-block').forEach(block => {
+                const type = block.dataset.treatmentType;
+                if (type === 'general') total += 1;
+                else if (type === 'pediatric') total += 1;
+            });
+            const capacityEl = document.querySelector('.week-capacity');
+            if (capacityEl) {
+                capacityEl.textContent = `예약 가능 인원 수 ${total}명`;
+            }
+        }
+
         // 시간 컬럼 생성 (30분 단위, 5분=10px 기준)
         function generateTimeSlots() {
             const timeColumn = document.getElementById('timeColumn');
             timeColumn.innerHTML = '';
-            
+
             // 09:00부터 21:00까지 30분 단위로 시간 표시
             // 총 12시간 = 720분 = 1440px
             // 30분 = 60px
             for (let i = 0; i <= 24; i++) { // 24개 슬롯 (09:00 ~ 21:00, 30분 단위)
                 const timeSlot = document.createElement('div');
                 timeSlot.className = 'time-slot';
-                
+
                 const totalMinutes = i * 30; // 0, 30, 60, 90, ... 720분
                 const time = minutesToTime(totalMinutes);
                 timeSlot.textContent = time;
-                
+
                 // 디버깅을 위한 위치 정보 추가
                 timeSlot.setAttribute('data-minutes', totalMinutes);
                 timeSlot.setAttribute('data-expected-top', totalMinutes * 2); // 5분=10px이므로 분당 2px
-                
+
                 timeColumn.appendChild(timeSlot);
             }
-            
+
             console.log('시간 슬롯 생성 완료 - 총 높이:', timeColumn.scrollHeight, 'px');
         }
 
         // 그리드 라인 생성 (5분 단위, 5분 = 10px)
         function generateGridLines() {
             const dayColumns = document.querySelectorAll('.day-column');
-            
+
             dayColumns.forEach(column => {
                 const hourLines = column.querySelector('.hour-lines');
                 if (!hourLines) return;
-                
+
                 hourLines.innerHTML = '';
-                
+
                 // 5분 단위로 라인 생성 (720분 = 12시간, 5분 = 10px)
                 for (let minutes = 0; minutes <= 720; minutes += 5) {
                     const line = document.createElement('div');
-                    
+
                     if (minutes % 60 === 0) {
                         line.className = 'hour-line';
                     } else {
                         line.className = 'five-minute-line';
                     }
-                    
+
                     line.style.top = (minutes * 2) + 'px'; // 5분 = 10px이므로 2배
                     hourLines.appendChild(line);
                 }
@@ -1034,14 +1102,14 @@
         function checkOverlap(column, newTop, newHeight, excludeBlock = null) {
             const existingBlocks = column.querySelectorAll('.schedule-block');
             const newBottom = newTop + newHeight;
-            
+
             for (let block of existingBlocks) {
                 if (excludeBlock && block === excludeBlock) continue;
-                
+
                 const blockTop = parseInt(block.style.top);
                 const blockBottom = blockTop + parseInt(block.style.height);
-                
-                if ((newTop >= blockTop && newTop < blockBottom) || 
+
+                if ((newTop >= blockTop && newTop < blockBottom) ||
                     (newBottom > blockTop && newBottom <= blockBottom) ||
                     (newTop <= blockTop && newBottom >= blockBottom)) {
                     return true;
@@ -1054,11 +1122,11 @@
         function createBlock(column, columnIndex, top, treatmentType = selectedTreatment) {
             const treatment = treatmentTypes[treatmentType];
             const blockHeight = treatment.height; // 치료 유형에 따른 높이
-            
+
             if (checkOverlap(column, top, blockHeight)) {
                 // 겹침으로 인해 생성 실패 시 피드백
                 console.log('겹침으로 인해 블럭 생성이 취소되었습니다.');
-                
+
                 // 잠시 빨간 표시 효과
                 const errorIndicator = document.createElement('div');
                 errorIndicator.style.cssText = `
@@ -1074,22 +1142,22 @@
                     pointer-events: none;
                     animation: errorPulse 0.6s ease-out;
                 `;
-                
+
                 column.appendChild(errorIndicator);
                 setTimeout(() => {
                     if (errorIndicator.parentElement) {
                         errorIndicator.parentElement.removeChild(errorIndicator);
                     }
                 }, 600);
-                
+
                 return null;
             }
-            
+
             const block = document.createElement('div');
             block.className = `schedule-block ${treatment.color}`;
             block.style.top = top + 'px';
             block.style.height = blockHeight + 'px';
-            
+
             // 높이에 따라 폰트 크기 조정
             if (blockHeight >= 30) {
                 block.style.fontSize = '11px';
@@ -1098,55 +1166,56 @@
             } else {
                 block.style.fontSize = '9px';
             }
-            
+
             const minutes = pixelsToMinutes(top);
             const startTime = minutesToTime(minutes);
             const endTime = minutesToTime(minutes + treatment.duration);
-            
+
             block.dataset.startTime = startTime;
             block.dataset.endTime = endTime;
             block.dataset.dayIndex = columnIndex;
             block.dataset.treatmentType = treatmentType;
-            
-            // 블럭 텍스트를 "고정명수 진료명" 형태로 표시
-            const patientCount = treatmentType === 'general' ? 3 : 1; // 일반진료: 3명, 영유아검진: 1명
-            const blockText = `${patientCount}명 ${treatment.name}`;
+
+            // 블럭 텍스트를 진료명만 표시
+            const blockText = treatment.name;
             block.textContent = blockText;
-            
+
             // 블럭 클릭 이벤트
-            block.addEventListener('click', function(e) {
+            block.addEventListener('click', function (e) {
                 if (hasMoved) return;
-                
+
                 // 삭제 모드일 때만 삭제
                 if (selectedTreatment === 'delete') {
                     block.remove();
+                    updateTotalCapacity();
                 }
                 // 다른 모드에서는 클릭으로 삭제하지 않음
             });
 
             // 블럭 이동 드래그 (삭제 모드가 아닐 때만)
-            block.addEventListener('mousedown', function(e) {
+            block.addEventListener('mousedown', function (e) {
                 if (selectedTreatment === 'delete') return; // 삭제 모드에서는 드래그 불가
-                
+
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 isMovingBlock = true;
                 movingBlock = block;
                 hasMoved = false;
-                
+
                 block.style.opacity = '0.5';
                 block.style.zIndex = '1000';
-                
+
                 // 이동 커서로 변경
                 setCursorMove();
             });
-            
+
             column.appendChild(block);
-            
+
             // 새 블럭 생성 후 커서 업데이트
             updateCursor();
-            
+            updateTotalCapacity();
+
             return block;
         }
 
@@ -1154,41 +1223,44 @@
         function deleteBlocksInArea(column, startY, endY) {
             const areaTop = Math.min(startY, endY);
             const areaBottom = Math.max(startY, endY);
-            
+
             // 컬럼 내의 모든 블럭을 확인
             const blocks = column.querySelectorAll('.schedule-block');
             const blocksToDelete = [];
-            
+
             blocks.forEach(block => {
                 const blockTop = parseInt(block.style.top);
                 const blockBottom = blockTop + parseInt(block.style.height);
-                
+
                 // 영역과 겹치는지 확인 (부분적 겹침도 포함)
                 if (!(blockBottom <= areaTop || blockTop >= areaBottom)) {
                     blocksToDelete.push(block);
                 }
             });
-            
+
             // 겹치는 블럭들 삭제
             blocksToDelete.forEach(block => {
                 block.remove();
             });
-            
+            if (blocksToDelete.length > 0) {
+                updateTotalCapacity();
+            }
+
             console.log(`삭제된 블럭 수: ${blocksToDelete.length}`);
         }
 
         // 멀티 블럭 생성 (드래그 범위에 치료 유형별 크기로)
         function createMultipleBlocks(column, columnIndex, startY, endY, treatmentType = selectedTreatment) {
-            
+
             const treatment = treatmentTypes[treatmentType];
             const top = Math.min(startY, endY);
             const height = Math.abs(endY - startY);
-            
+
             // 치료 유형별 크기로 블럭 생성
             const blockHeight = treatment.height;
             const blockCount = Math.floor(height / blockHeight);
             const createdBlocks = [];
-            
+
             for (let i = 0; i < blockCount; i++) {
                 const blockTop = top + (i * blockHeight);
                 const newBlock = createBlock(column, columnIndex, blockTop, treatmentType);
@@ -1196,28 +1268,28 @@
                     createdBlocks.push(newBlock);
                 }
             }
-            
+
             return createdBlocks;
         }
 
         // 호버 프리뷰 생성/업데이트 함수
         function showHoverPreview(column, mouseY) {
             if (selectedTreatment === 'delete' || isDragging || isMovingBlock) return;
-            
+
             const treatment = treatmentTypes[selectedTreatment];
             const snappedY = snapToPosition(mouseY);
-            
+
             // 기존 프리뷰 제거
             if (hoverPreview && hoverPreview.parentElement) {
                 hoverPreview.parentElement.removeChild(hoverPreview);
             }
-            
+
             // 새 프리뷰 생성
             hoverPreview = document.createElement('div');
             hoverPreview.className = 'hover-preview';
             hoverPreview.style.top = snappedY + 'px';
             hoverPreview.style.height = treatment.height + 'px';
-            
+
             // 겹침 체크
             if (checkOverlap(column, snappedY, treatment.height)) {
                 hoverPreview.style.background = 'rgba(255, 99, 99, 0.4)';
@@ -1226,10 +1298,10 @@
                 hoverPreview.style.background = 'rgba(128, 128, 128, 0.4)';
                 hoverPreview.style.borderColor = '#999';
             }
-            
+
             column.appendChild(hoverPreview);
         }
-        
+
         // 호버 프리뷰 제거 함수
         function hideHoverPreview() {
             if (hoverPreview && hoverPreview.parentElement) {
@@ -1242,31 +1314,31 @@
         function updateCursor() {
             const dayColumns = document.querySelectorAll('.day-column');
             const scheduleBlocks = document.querySelectorAll('.schedule-block');
-            
+
             // 휴지통 커서 생성 함수
             function createTrashCursor() {
                 const canvas = document.createElement('canvas');
                 canvas.width = 20;
                 canvas.height = 20;
                 const ctx = canvas.getContext('2d');
-                
+
                 // 간단한 휴지통 모양 그리기
                 ctx.fillStyle = '#ff4444';
-                
+
                 // 휴지통 몸체
                 ctx.fillRect(4, 7, 12, 10);
-                
+
                 // 휴지통 뚜껑
                 ctx.fillRect(3, 5, 14, 2);
-                
+
                 // 손잡이
                 ctx.fillRect(7, 3, 6, 2);
-                
+
                 return 'url(' + canvas.toDataURL() + ') 10 10, auto';
             }
-            
+
             const trashCursor = createTrashCursor();
-            
+
             // 선택된 치료 유형에 따라 커서 설정
             if (selectedTreatment === 'delete') {
                 console.log('삭제 모드 커서 적용 중...');
@@ -1300,24 +1372,23 @@
         }
 
         // 진료항목 선택 이벤트
-        document.querySelectorAll('.treatment-item').forEach(item => {
-            item.addEventListener('click', function() {
-                // 모든 라디오 버튼 선택 해제
-                document.querySelectorAll('.treatment-radio').forEach(radio => {
-                    radio.classList.remove('selected');
+        document.querySelectorAll('.treatment-item-box').forEach(item => {
+            item.addEventListener('click', function () {
+                // 모든 박스 선택 해제
+                document.querySelectorAll('.treatment-item-box').forEach(box => {
+                    box.classList.remove('selected');
                 });
-                
+
                 // 클릭된 항목 선택
-                const radio = this.querySelector('.treatment-radio');
-                radio.classList.add('selected');
-                
+                this.classList.add('selected');
+
                 // 선택된 치료 타입 업데이트
                 selectedTreatment = this.dataset.treatment;
                 console.log('선택된 진료:', treatmentTypes[selectedTreatment].name);
-                
+
                 // 기존 호버 프리뷰 제거 (새로운 치료 유형으로 변경되었으므로)
                 hideHoverPreview();
-                
+
                 // 커서 업데이트
                 console.log('커서 업데이트 시작 - selectedTreatment:', selectedTreatment);
                 updateCursor();
@@ -1328,40 +1399,40 @@
         // 드래그 이벤트 설정
         document.querySelectorAll('.day-column').forEach((column, columnIndex) => {
             // 호버 프리뷰 이벤트
-            column.addEventListener('mousemove', function(e) {
+            column.addEventListener('mousemove', function (e) {
                 if (isDragging || isMovingBlock) return;
-                
+
                 const rect = column.getBoundingClientRect();
                 const rawY = e.clientY - rect.top;
                 showHoverPreview(column, rawY);
             });
-            
-            column.addEventListener('mouseleave', function(e) {
+
+            column.addEventListener('mouseleave', function (e) {
                 if (!isDragging && !isMovingBlock) {
                     hideHoverPreview();
                 }
             });
-            
-            column.addEventListener('mousedown', function(e) {
+
+            column.addEventListener('mousedown', function (e) {
                 if (isMovingBlock) return;
-                
-                if (e.target !== column && !e.target.classList.contains('hour-lines') && 
+
+                if (e.target !== column && !e.target.classList.contains('hour-lines') &&
                     !e.target.classList.contains('hour-line') && !e.target.classList.contains('five-minute-line')) {
                     return;
                 }
-                
+
                 e.preventDefault();
                 isDragging = true;
                 currentColumn = column;
                 hasMoved = false;
-                
+
                 // 드래그 시작 시 호버 프리뷰 제거
                 hideHoverPreview();
-                
+
                 const rect = column.getBoundingClientRect();
                 const rawY = e.clientY - rect.top;
                 dragStartY = snapToPosition(rawY);
-                
+
                 // 드래그 프리뷰 생성
                 if (selectedTreatment === 'delete') {
                     // 삭제 모드용 프리뷰
@@ -1386,11 +1457,11 @@
 
             // 드래그 중 mousemove는 별도로 처리하지 않음 (전역 이벤트에서 처리)
 
-            column.addEventListener('mouseup', function(e) {
+            column.addEventListener('mouseup', function (e) {
                 if (!isDragging || currentColumn !== column) return;
-                
+
                 e.preventDefault();
-                
+
                 if (selectedTreatment === 'delete') {
                     // 삭제 모드 처리
                     if (hasMoved) {
@@ -1398,7 +1469,7 @@
                         const rect = column.getBoundingClientRect();
                         const rawEndY = e.clientY - rect.top;
                         const endY = snapToPosition(rawEndY);
-                        
+
                         deleteBlocksInArea(column, dragStartY, endY);
                     }
                     // 클릭 삭제는 개별 블럭 클릭 이벤트에서 처리
@@ -1412,11 +1483,11 @@
                         const rect = column.getBoundingClientRect();
                         const rawEndY = e.clientY - rect.top;
                         const endY = snapToPosition(rawEndY);
-                        
+
                         createMultipleBlocks(column, columnIndex, dragStartY, endY, selectedTreatment);
                     }
                 }
-                
+
                 // 정리
                 if (dragPreview) {
                     dragPreview.remove();
@@ -1425,7 +1496,7 @@
                 isDragging = false;
                 currentColumn = null;
                 hasMoved = false;
-                
+
                 // 드래그 종료 후 마우스 위치에 호버 프리뷰 다시 표시
                 setTimeout(() => {
                     const rect = column.getBoundingClientRect();
@@ -1438,18 +1509,18 @@
         });
 
         // 전역 마우스 이벤트
-        document.addEventListener('mousemove', function(e) {
+        document.addEventListener('mousemove', function (e) {
             if (isMovingBlock && movingBlock) {
                 e.preventDefault();
                 hasMoved = true;
-                
+
                 // 블럭 이동 중에는 호버 프리뷰 숨기기
                 hideHoverPreview();
-                
+
                 // 블럭 이동 로직 (기존과 동일)
                 const dayColumns = document.querySelectorAll('.day-column');
                 let targetColumn = null;
-                
+
                 for (let i = 0; i < dayColumns.length; i++) {
                     const columnRect = dayColumns[i].getBoundingClientRect();
                     if (e.clientX >= columnRect.left && e.clientX <= columnRect.right) {
@@ -1457,17 +1528,17 @@
                         break;
                     }
                 }
-                
+
                 if (targetColumn) {
                     const rect = targetColumn.getBoundingClientRect();
                     const newTop = snapToPosition(e.clientY - rect.top);
-                    
+
                     if (newTop >= 0 && newTop <= 1440) { // 12시간 범위 (720분 * 2 = 1440px)
                         const blockHeight = parseInt(movingBlock.style.height);
                         // 겹침 검사 후 이동 (현재 블럭 제외)
                         if (!checkOverlap(targetColumn, newTop, blockHeight, movingBlock)) {
                             movingBlock.style.top = newTop + 'px';
-                            
+
                             // 시간 데이터 업데이트
                             const minutes = pixelsToMinutes(newTop);
                             const treatmentType = movingBlock.dataset.treatmentType;
@@ -1479,25 +1550,25 @@
                 }
                 return;
             }
-            
+
             // 기존 드래그 로직
             if (!isDragging || !currentColumn || !dragPreview) return;
-            
+
             const rect = currentColumn.getBoundingClientRect();
             const rawCurrentY = e.clientY - rect.top;
-            
+
             if (rawCurrentY < 0 || rawCurrentY > rect.height) return;
-            
+
             const currentY = snapToPosition(rawCurrentY);
-            
+
             const threshold = selectedTreatment !== 'delete' ? treatmentTypes[selectedTreatment].height : 10;
             if (Math.abs(currentY - dragStartY) > threshold) {
                 hasMoved = true;
             }
-            
+
             const top = Math.min(dragStartY, currentY);
             const height = Math.abs(currentY - dragStartY);
-            
+
             if (dragPreview) {
                 dragPreview.style.top = top + 'px';
                 if (selectedTreatment === 'delete') {
@@ -1511,15 +1582,15 @@
             }
         });
 
-        document.addEventListener('mouseup', function(e) {
+        document.addEventListener('mouseup', function (e) {
             if (isMovingBlock && movingBlock) {
                 e.preventDefault();
-                
+
                 // 이동 완료 처리
                 const dayColumns = document.querySelectorAll('.day-column');
                 let targetColumn = null;
                 let targetColumnIndex = -1;
-                
+
                 for (let i = 0; i < dayColumns.length; i++) {
                     const columnRect = dayColumns[i].getBoundingClientRect();
                     if (e.clientX >= columnRect.left && e.clientX <= columnRect.right) {
@@ -1528,18 +1599,18 @@
                         break;
                     }
                 }
-                
+
                 if (targetColumn && movingBlock.parentElement !== targetColumn) {
                     const rect = targetColumn.getBoundingClientRect();
                     const newTop = snapToPosition(e.clientY - rect.top);
-                    
+
                     const blockHeight = parseInt(movingBlock.style.height);
                     if (!checkOverlap(targetColumn, newTop, blockHeight, movingBlock)) {
                         movingBlock.parentElement.removeChild(movingBlock);
                         targetColumn.appendChild(movingBlock);
                         movingBlock.style.top = newTop + 'px';
                         movingBlock.dataset.dayIndex = targetColumnIndex;
-                        
+
                         // 시간 데이터 업데이트
                         const minutes = pixelsToMinutes(newTop);
                         const treatmentType = movingBlock.dataset.treatmentType;
@@ -1548,17 +1619,17 @@
                         movingBlock.dataset.endTime = minutesToTime(minutes + duration);
                     }
                 }
-                
+
                 movingBlock.style.opacity = '1';
                 movingBlock.style.zIndex = '10';
-                
+
                 isMovingBlock = false;
                 movingBlock = null;
                 hasMoved = false;
-                
+
                 // 커서 복원
                 resetCursor();
-                
+
                 // 블럭 이동 완료 후 마우스 위치에 호버 프리뷰 다시 표시
                 setTimeout(() => {
                     const dayColumns = document.querySelectorAll('.day-column');
@@ -1572,10 +1643,10 @@
                         }
                     }
                 }, 10);
-                
+
                 return;
             }
-            
+
             if (isDragging) {
                 if (dragPreview) {
                     dragPreview.remove();
@@ -1587,28 +1658,43 @@
             }
         });
 
+        // 캘린더/스케줄 헤더와 본문 정렬 (스크롤바 너비 보정)
+        function alignScheduleHeaders() {
+            const content = document.querySelector('.schedule-content');
+            const headers = document.querySelector('.date-headers');
+            if (content && headers) {
+                const scrollbarWidth = content.offsetWidth - content.clientWidth;
+                headers.style.paddingRight = scrollbarWidth + 'px';
+            }
+        }
+
+        window.addEventListener('resize', alignScheduleHeaders);
+
         // 초기화
         generateTimeSlots();
         generateGridLines();
-        
+        alignScheduleHeaders();
+        updateTotalCapacity();
+
         // 초기 커서 설정
         updateCursor();
-        
+
         // 시간 정렬 확인을 위한 디버깅 로그
         console.log('=== 시간 레이블 정렬 확인 ===');
         console.log('5분 = 10px 기준');
         console.log('30분 = 60px 기준');
         console.log('12시간(720분) = 1440px 기준');
-        
+
         // 몇 가지 샘플 시간의 예상 위치 출력
         for (let minutes of [0, 30, 60, 120, 180, 360, 720]) {
             const expectedPx = minutes * 2; // 5분=10px이므로 분당 2px
             const time = minutesToTime(minutes);
             console.log(`${time} (${minutes}분) → ${expectedPx}px`);
         }
-        
+
         console.log('진료 스케줄러가 준비되었습니다. (일반진료: 5분=10px, 영유아검진: 15분=30px)');
         console.log('현재 선택된 진료:', treatmentTypes[selectedTreatment].name);
     </script>
 </body>
-</html> 
+
+</html>

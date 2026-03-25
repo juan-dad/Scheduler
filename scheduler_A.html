@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예약 스케줄러 v3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,71 +16,135 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f5f7f9;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
             color: #2c3744;
-            overflow-x: auto;
+            overflow: hidden;
         }
 
         .scheduler-container {
-            width: 1920px;
-            height: 846px;
+            width: 100vw;
+            height: 100vh;
             background: #ffffff;
+            display: flex;
             position: relative;
-            margin: 20px auto;
-            border: 1px solid #e5e5e5;
+            overflow: hidden;
         }
 
-        /* 헤더 영역 */
-        .header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 64px;
+        /* 메인 스케줄 컨테이너 (우측 전체) */
+        .main-schedule {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0; /* flex 자식의 최소 너비 보정 */
+        }
+
+        /* 주간 헤더 영역 */
+        .week-header {
             background: #ffffff;
-            border-bottom: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e8eb;
+            display: flex;
+            flex-direction: column;
+            z-index: 40;
+            flex-shrink: 0;
+        }
+
+        .week-info {
+            padding: 16px 30px;
             display: flex;
             align-items: center;
-            padding: 0 20px;
             justify-content: space-between;
+            border-bottom: 1px solid #e5e8eb;
         }
 
-        .header-left {
+        .week-title-row {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
         }
 
-        .clinic-name {
+        .week-title {
             font-size: 18px;
-            font-weight: 400;
-            color: #000000;
-        }
-
-        .date-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .date-dropdown {
-            display: flex;
-            align-items: center;
-            padding: 9px 12px;
-            background: #ffffff;
-            border: 1px solid #e5e5e5;
-            border-radius: 4px;
-            font-size: 14px;
+            font-weight: 700;
             color: #2c3744;
+            margin: 0;
+        }
+
+        .week-nav {
+            font-size: 20px;
+            color: #999;
             cursor: pointer;
+            user-select: none;
         }
 
-        .week-text {
-            font-size: 18px;
+        .week-capacity {
+            font-size: 13px;
+            color: #666;
+            margin-left: 16px;
+        }
+
+        .date-headers {
+            display: flex;
+            height: 60px;
+        }
+
+        .time-column-header {
+            width: 80px;
+            background: #f8f9fa;
+            border-right: 1px solid #e5e8eb;
+            flex-shrink: 0;
+        }
+
+        .date-column {
+            flex: 1;
+            border-right: 1px solid #e5e8eb;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+        }
+
+        .date-column:last-child {
+            border-right: none;
+        }
+
+        .date-text {
+            font-size: 14px;
             font-weight: 500;
+            color: #666;
+        }
+
+        .date-text .num {
+            font-size: 16px;
+            font-weight: 700;
             color: #2c3744;
-            margin-left: 20px;
+            margin-left: 4px;
+        }
+
+        .date-column.weekend.red .num,
+        .date-column.weekend.red .date-text {
+            color: #ff6b6b;
+        }
+
+        .date-column.weekend.blue .num,
+        .date-column.weekend.blue .date-text {
+            color: #1976d2;
+        }
+
+        .copy-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .copy-btn:hover {
+            background: #f8f9fa;
         }
 
         .header-right {
@@ -102,154 +168,237 @@
             background: #f8f9fa;
         }
 
-        /* 사이드바 진료항목 */
-        .sidebar {
-            position: absolute;
-            top: 64px;
-            left: 0;
-            width: 300px;
-            height: 782px;
+        /* 좌측 사이드바 */
+        .left-sidebar {
+            width: 280px;
+            height: 100%;
             background: #ffffff;
-            border-right: 1px solid #e5e5e5;
-            overflow-y: auto;
+            border-right: 1px solid #e5e8eb;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 50;
         }
 
-        .treatment-item {
+        /* 병원명 헤더 */
+        .clinic-header {
             padding: 16px 20px;
-            border-bottom: 1px solid #f0f2f4;
-            position: relative;
+            border-bottom: 1px solid #e5e8eb;
         }
 
-        .treatment-item.active {
-            background: #f8f9fc;
+        .clinic-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3744;
+            margin-bottom: 4px;
         }
 
-        .treatment-header {
+        /* 캘린더 영역 */
+        .calendar-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e8eb;
+        }
+
+        .calendar-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
-
-        .radio-btn {
-            width: 18px;
-            height: 18px;
-            border: 2px solid #d4d9dc;
-            border-radius: 50%;
+            justify-content: center;
+            margin-bottom: 16px;
             position: relative;
-            cursor: pointer;
         }
 
-        .radio-btn.checked {
-            border-color: #2c3744;
-            background: #2c3744;
-        }
-
-        .radio-btn.checked::after {
-            content: '';
+        .calendar-nav {
             position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 10px;
-            height: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .calendar-nav.prev {
+            left: 0;
+        }
+
+        .calendar-nav.next {
+            right: 0;
+        }
+
+        .calendar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3744;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e5e8eb;
+            border: 1px solid #e5e8eb;
+        }
+
+        .calendar-day-header {
+            background: #f8f9fa;
+            padding: 6px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .calendar-day {
             background: #ffffff;
-            border-radius: 50%;
+            padding: 6px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-day:hover {
+            background: #f0f7ff;
+        }
+
+        .calendar-day-header.weekend.red,
+        .calendar-day.weekend.red {
+            color: #ff6b6b;
+        }
+
+        .calendar-day-header.weekend.blue,
+        .calendar-day.weekend.blue {
+            color: #1976d2;
+        }
+
+        .calendar-day.selected-week {
+            background: #FFF8B6;
+        }
+
+        .calendar-day.selected {
+            background: #e3f2fd;
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+
+        .calendar-day.today {
+            font-weight: 700;
+            color: #ff6b6b;
+        }
+
+        /* 진료항목 섹션 */
+        .treatment-section {
+            flex: 1;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 0px;
+        }
+
+        .settings-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .settings-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .treatment-item-box {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #f0f2f4;
+            cursor: pointer;
+            gap: 12px;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .treatment-item-box.selected {
+            border-color: #fdd835;
+            background: #fffde7;
         }
 
         .treatment-name {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 500;
             color: #2c3744;
         }
 
-        .treatment-desc {
-            font-size: 14px;
-            font-weight: 700;
-            color: #506073;
-            margin-left: 30px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            opacity: 0.6;
-        }
-
         /* 메인 스케줄 영역 */
         .schedule-main {
-            position: absolute;
-            top: 64px;
-            left: 300px;
-            width: calc(100% - 300px);
-            height: 716px;
-            background: #ffffff;
-        }
-
-        /* 요일 헤더 */
-        .weekday-header {
-            position: absolute;
-            top: 0;
-            left: 66px;
-            width: calc(100% - 66px);
-            height: 56px;
-            background: #ffffff;
-            display: flex;
-            border-bottom: 1px solid #edf0f3;
-        }
-
-        .weekday-cell {
+            width: 100%;
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: #36475a;
-            border-right: 1px solid #edf0f3;
+            overflow-y: auto;
+            background: #ffffff;
         }
 
-        .weekday-cell:last-child {
-            border-right: none;
+        .schedule-scroll-inner {
+            display: flex;
+            width: 100%;
+            height: 1440px;
         }
 
         /* 시간 라벨 */
         .time-labels {
-            position: absolute;
-            top: 56px;
-            left: 0;
-            width: 66px;
-            height: 660px;
+            position: relative;
+            flex-shrink: 0;
+            width: 80px;
+            height: 1440px;
+            background: #f8f9fa;
+            border-right: 1px solid #e5e8eb;
         }
 
         .time-label {
             position: absolute;
-            left: 20px;
-            font-size: 12px;
-            color: #959ba1;
+            left: 0;
+            width: 80px;
+            font-size: 11px;
+            color: #666;
             font-weight: 400;
-            height: 10px;
+            height: 60px;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
 
         /* 스케줄 그리드 */
         .schedule-grid {
-            position: absolute;
-            top: 56px;
-            left: 66px;
-            width: calc(100% - 66px);
-            height: 660px;
+            flex: 1;
+            position: relative;
+            height: 1440px;
             display: flex;
         }
 
         .day-column {
             flex: 1;
             position: relative;
-            border-right: 1px solid #edf0f3;
+            border-right: 1px solid #e5e8eb;
             background: #ffffff;
             cursor: crosshair;
         }
@@ -276,20 +425,12 @@
             background: #E5E8EB;
         }
 
-        .ten-minute-line {
+        .five-minute-line {
             position: absolute;
             left: 0;
             width: 100%;
             height: 1px;
-            background: #F5F7F9;
-        }
-
-        .minute-line {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: #f5f7f9;
+            background: #f0f2f4;
         }
 
         /* 예약 블록 */
@@ -387,6 +528,11 @@
             padding: 8px;
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             cursor: move;
+        }
+
+        .drag-box[data-title="알레르기 클리닉"] {
+            background: #fff9c4;
+            border-color: #f9a825;
         }
 
         .drag-preview {
@@ -614,106 +760,196 @@
         .action-button.primary:hover {
             background: #3d4a59;
         }
-
-
     </style>
 </head>
+
 <body>
     <div class="scheduler-container">
-        <!-- 헤더 -->
-        <div class="header">
-            <div class="header-left">
+        <!-- 사이드바 -->
+        <div class="left-sidebar">
+            <!-- 병원명 헤더 -->
+            <div class="clinic-header">
                 <div class="clinic-name">[김똑닥진료실/소아청소년과]</div>
-                <div class="date-selector">
-                    <div class="date-dropdown">
-                        <span>2025년 09월</span>
-                        <svg width="16" height="16" viewBox="0 0 16 16" style="margin-left: 8px;">
-                            <path d="M4 6L8 10L12 6" stroke="#666" stroke-width="1.5" fill="none"/>
-                        </svg>
+            </div>
+
+            <!-- 캘린더 -->
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <div class="calendar-nav prev">‹</div>
+                    <div class="calendar-title">2025년 7월</div>
+                    <div class="calendar-nav next">›</div>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">월</div>
+                    <div class="calendar-day-header">화</div>
+                    <div class="calendar-day-header">수</div>
+                    <div class="calendar-day-header">목</div>
+                    <div class="calendar-day-header">금</div>
+                    <div class="calendar-day-header weekend blue">토</div>
+                    <div class="calendar-day-header weekend red">일</div>
+
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day weekend blue">1</div>
+                    <div class="calendar-day weekend red">2</div>
+
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day">5</div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+                    <div class="calendar-day weekend blue">8</div>
+                    <div class="calendar-day weekend red">9</div>
+
+                    <div class="calendar-day">10</div>
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day">12</div>
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day">14</div>
+                    <div class="calendar-day weekend blue">15</div>
+                    <div class="calendar-day weekend red">16</div>
+
+                    <div class="calendar-day selected-week">17</div>
+                    <div class="calendar-day selected-week">18</div>
+                    <div class="calendar-day selected-week">19</div>
+                    <div class="calendar-day selected-week">20</div>
+                    <div class="calendar-day selected-week">21</div>
+                    <div class="calendar-day selected-week weekend blue">22</div>
+                    <div class="calendar-day selected-week weekend red">23</div>
+
+                    <div class="calendar-day">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day">26</div>
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day">28</div>
+                    <div class="calendar-day weekend blue">29</div>
+                    <div class="calendar-day weekend red">30</div>
+
+                    <div class="calendar-day">31</div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month"></div>
+                </div>
+            </div>
+
+            <!-- 진료항목 선택 -->
+            <div class="treatment-section">
+                <div class="section-header">
+                    <div class="section-title">진료항목</div>
+                    <button class="settings-btn">설정</button>
+                </div>
+
+                <div class="treatment-item-box selected" data-treatment="general">
+                    <span class="treatment-name">일반진료</span>
+                </div>
+
+                <div class="treatment-item-box" data-treatment="pediatric">
+                    <span class="treatment-name">알레르기 클리닉</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-schedule">
+            <!-- 주간 헤더 -->
+            <div class="week-header">
+                <div class="week-info">
+                    <div class="week-title-row">
+                        <span class="week-nav prev">‹</span>
+                        <h2 class="week-title">9월 17일 ~ 23일</h2>
+                        <span class="week-nav next">›</span>
+                        <span class="week-capacity">예약 가능 인원 수 10명</span>
                     </div>
-                    <div class="week-text">1주 차</div>
+                    <div class="header-right">
+                        <button class="header-btn">초기화</button>
+                        <button class="header-btn">스케줄 복사</button>
+                    </div>
+                </div>
+                <div class="date-headers">
+                    <div class="time-column-header"></div>
+                    <div class="date-column">
+                        <div class="date-text">월 <span class="num">17</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
+                    <div class="date-column">
+                        <div class="date-text">화 <span class="num">18</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
+                    <div class="date-column">
+                        <div class="date-text">수 <span class="num">19</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
+                    <div class="date-column">
+                        <div class="date-text">목 <span class="num">20</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
+                    <div class="date-column">
+                        <div class="date-text">금 <span class="num">21</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
+                    <div class="date-column weekend blue">
+                        <div class="date-text">토 <span class="num">22</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
+                    <div class="date-column weekend red">
+                        <div class="date-text">일 <span class="num">23</span></div>
+                        <button class="copy-btn">복사</button>
+                    </div>
                 </div>
             </div>
-            <div class="header-right">
-                <button class="header-btn">초기화</button>
-                <button class="header-btn">스케줄 복사</button>
-            </div>
-        </div>
 
-        <!-- 사이드바 진료항목 -->
-        <div class="sidebar">
-            <div class="treatment-item active">
-                <div class="treatment-header">
-                    <div class="radio-btn checked"></div>
-                    <div class="treatment-name">모든진료항목</div>
-                </div>
-                <div class="treatment-desc">5분마다 1명씩 진료</div>
-                <div class="close-btn">✕</div>
-            </div>
-            <div class="treatment-item">
-                <div class="treatment-header">
-                    <div class="radio-btn"></div>
-                    <div class="treatment-name">영유아검진</div>
-                </div>
-                <div class="treatment-desc">30분마다 1명씩 진료</div>
-                <div class="close-btn">✕</div>
-            </div>
-        </div>
-
-        <!-- 메인 스케줄 영역 -->
-        <div class="schedule-main">
-            <!-- 요일 헤더 -->
-            <div class="weekday-header">
-                <div class="weekday-cell">월</div>
-                <div class="weekday-cell">화</div>
-                <div class="weekday-cell">수</div>
-                <div class="weekday-cell">목</div>
-                <div class="weekday-cell">금</div>
-                <div class="weekday-cell">토</div>
-                <div class="weekday-cell">일</div>
-            </div>
-
-            <!-- 시간 라벨 (동적 생성) -->
-            <div class="time-labels" id="timeLabels">
-            </div>
-
-            <!-- 스케줄 그리드 -->
-            <div class="schedule-grid">
-                <!-- 월요일 -->
-                <div class="day-column">
-                    <!-- 시간 줄눈 (동적 생성) -->
-                    <div class="hour-lines"></div>
+            <!-- 메인 스케줄 영역 -->
+            <div class="schedule-main">
+                <div class="schedule-scroll-inner">
+                <!-- 시간 라벨 (동적 생성) -->
+                <div class="time-labels" id="timeLabels">
                 </div>
 
-                <!-- 화요일 -->
-                <div class="day-column">
-                    <div class="hour-lines"></div>
-                </div>
+                <!-- 스케줄 그리드 -->
+                <div class="schedule-grid">
+                    <!-- 월요일 -->
+                    <div class="day-column">
+                        <!-- 시간 줄눈 (동적 생성) -->
+                        <div class="hour-lines"></div>
+                    </div>
 
-                <!-- 수요일 -->
-                <div class="day-column">
-                    <div class="hour-lines"></div>
-                </div>
+                    <!-- 화요일 -->
+                    <div class="day-column">
+                        <div class="hour-lines"></div>
+                    </div>
 
-                <!-- 목요일 -->
-                <div class="day-column">
-                    <div class="hour-lines"></div>
-                </div>
+                    <!-- 수요일 -->
+                    <div class="day-column">
+                        <div class="hour-lines"></div>
+                    </div>
 
-                <!-- 금요일 -->
-                <div class="day-column">
-                    <div class="hour-lines"></div>
-                </div>
+                    <!-- 목요일 -->
+                    <div class="day-column">
+                        <div class="hour-lines"></div>
+                    </div>
 
-                <!-- 토요일 -->
-                <div class="day-column">
-                    <div class="hour-lines"></div>
-                </div>
+                    <!-- 금요일 -->
+                    <div class="day-column">
+                        <div class="hour-lines"></div>
+                    </div>
 
-                <!-- 일요일 -->
-                <div class="day-column">
-                    <div class="hour-lines"></div>
+                    <!-- 토요일 -->
+                    <div class="day-column">
+                        <div class="hour-lines"></div>
+                    </div>
+
+                    <!-- 일요일 -->
+                    <div class="day-column">
+                        <div class="hour-lines"></div>
+                    </div>
                 </div>
+                </div><!-- schedule-scroll-inner -->
             </div>
         </div>
 
@@ -740,94 +976,83 @@
         let movePreview = null;
         let originalPosition = null;
 
-        // 진료항목 선택 기능
-        document.querySelectorAll('.treatment-item').forEach(item => {
-            item.addEventListener('click', function() {
-                // 모든 항목에서 active 제거
-                document.querySelectorAll('.treatment-item').forEach(i => {
-                    i.classList.remove('active');
-                    i.querySelector('.radio-btn').classList.remove('checked');
+        // 진료항목 선택 이벤트
+        document.querySelectorAll('.treatment-item-box').forEach(item => {
+            item.addEventListener('click', function () {
+                // 모든 박스 선택 해제
+                document.querySelectorAll('.treatment-item-box').forEach(box => {
+                    box.classList.remove('selected');
                 });
-                
-                // 클릭된 항목에 active 추가
-                this.classList.add('active');
-                this.querySelector('.radio-btn').classList.add('checked');
+
+                // 클릭된 항목 선택
+                this.classList.add('selected');
             });
         });
 
-        // 5분 단위로 스냅핑하는 함수
+        // 5분 단위로 스냅핑하는 함수 (5분 = 10px)
         function snapToFiveMinutes(pixels) {
-            return Math.round(pixels / 5) * 5; // 5px(5분) 단위로 스냅
+            return Math.round(pixels / 10) * 10; // 10px(5분) 단위로 스냅
         }
 
-        // 화면 절대 위치를 분으로 변환하는 함수 (08:00 기준, 56px 오프셋 고려)
+        // 화면 절대 위치를 분으로 변환하는 함수 (09:00 기준, 2px/min)
         function pixelsToMinutes(pixels) {
-            // 56px 오프셋 제거 후 분으로 변환 (1px = 1분)
-            const adjustedPixels = Math.max(0, pixels - 56);
-            const minutes = snapToFiveMinutes(adjustedPixels); // 5분 단위 스냅 (최소값 제한 제거)
-            // 19:00 (660분)을 넘지 않도록 제한, 0 이하는 0으로
-            return Math.max(0, Math.min(minutes, (19 - 8) * 60));
+            const snappedPixels = snapToFiveMinutes(Math.max(0, pixels));
+            return Math.max(0, Math.min(snappedPixels / 2, 720)); // 09:00-21:00 = 720분
         }
 
-        // 콘텐츠 영역 상대 위치를 분으로 변환하는 함수 (08:00 기준, 오프셋 없음)
+        // 콘텐츠 영역 상대 위치를 분으로 변환하는 함수 (09:00 기준, 오프셋 없음)
         function contentPixelsToMinutes(pixels) {
-            // 이미 콘텐츠 영역 기준이므로 오프셋 제거 없이 분으로 변환 (1px = 1분)
-            const minutes = snapToFiveMinutes(pixels); // 5분 단위 스냅 (최소값 제한 제거)
-            // 19:00 (660분)을 넘지 않도록 제한, 0 이하는 0으로
-            return Math.max(0, Math.min(minutes, (19 - 8) * 60));
+            const snappedPixels = snapToFiveMinutes(pixels);
+            return Math.max(0, Math.min(snappedPixels / 2, 720)); // 09:00-21:00 = 720분
         }
 
         function minutesToTime(minutes) {
-            const hours = Math.floor(minutes / 60) + 8; // 08:00부터 시작
+            const hours = Math.floor(minutes / 60) + 9; // 09:00부터 시작
             const mins = minutes % 60;
-            // 19:00을 넘지 않도록 제한
-            const limitedHours = Math.min(hours, 19);
-            const limitedMins = limitedHours === 19 ? 0 : mins;
+            const limitedHours = Math.min(hours, 21);
+            const limitedMins = limitedHours === 21 ? 0 : mins;
             return `${limitedHours.toString().padStart(2, '0')}:${limitedMins.toString().padStart(2, '0')}`;
         }
 
-        // 시간을 화면 절대 픽셀 위치로 변환하는 함수 (08:00 기준, 56px 오프셋 포함)
+        // 시간을 콘텐츠 영역 절대 픽셀 위치로 변환 (09:00 기준, 2px/min)
         function timeToPixels(timeString) {
             const [hours, minutes] = timeString.split(':').map(Number);
-            // 19:00을 넘지 않도록 제한
-            const limitedHours = Math.min(hours, 19);
-            const limitedMinutes = limitedHours === 19 ? 0 : minutes;
-            const totalMinutes = (limitedHours - 8) * 60 + limitedMinutes; // 08:00 기준으로 분 계산
-            return 56 + snapToFiveMinutes(totalMinutes); // 56px 오프셋 + 5분 단위 스냅된 분
+            const limitedHours = Math.min(hours, 21);
+            const limitedMinutes = limitedHours === 21 ? 0 : minutes;
+            const totalMinutes = (limitedHours - 9) * 60 + limitedMinutes;
+            return totalMinutes * 2;
         }
 
-        // 시간을 콘텐츠 영역 상대 픽셀 위치로 변환하는 함수 (08:00 기준, 오프셋 없음)
+        // 시간을 콘텐츠 영역 상대 픽셀 위치로 변환 (09:00 기준, 오프셋 없음)
         function timeToContentPixels(timeString) {
             const [hours, minutes] = timeString.split(':').map(Number);
-            // 19:00을 넘지 않도록 제한
-            const limitedHours = Math.min(hours, 19);
-            const limitedMinutes = limitedHours === 19 ? 0 : minutes;
-            const totalMinutes = (limitedHours - 8) * 60 + limitedMinutes; // 08:00 기준으로 분 계산
-            return snapToFiveMinutes(totalMinutes); // 오프셋 없이 5분 단위 스냅된 분
+            const limitedHours = Math.min(hours, 21);
+            const limitedMinutes = limitedHours === 21 ? 0 : minutes;
+            const totalMinutes = (limitedHours - 9) * 60 + limitedMinutes;
+            return totalMinutes * 2;
         }
 
         // 픽셀을 순수 분 단위로 변환 (높이/duration 계산용, 오프셋 없음)
         function pixelsToDuration(pixels) {
-            return Math.max(5, snapToFiveMinutes(pixels)); // 최소 5분, 5분 단위 스냅
+            return Math.max(5, snapToFiveMinutes(pixels) / 2); // 최소 5분, 5분 단위 스냅
         }
 
-        // 시간 라벨을 실제 블럭 데이터와 동일하게 생성
+        // 시간 라벨 생성 (09:00~21:00, 30분 단위, 2px/min)
         function generateTimeLabels() {
             const timeLabelsContainer = document.getElementById('timeLabels');
-            timeLabelsContainer.innerHTML = ''; // 기존 라벨 제거
-            
-            // 08:00부터 19:00까지 1시간 간격으로 라벨 생성
-            for (let hour = 8; hour <= 19; hour++) {
-                const timeString = `${hour.toString().padStart(2, '0')}:00`;
-                // 08:00 기준으로 분 계산 (오프셋 없음 - time-labels가 이미 top: 56px로 위치잡힘)
-                const totalMinutes = (hour - 8) * 60; // 08:00 기준 분
-                const pixelPosition = totalMinutes; // 오프셋 제거
-                
+            timeLabelsContainer.innerHTML = '';
+
+            // 09:00부터 21:00까지 30분 간격으로 라벨 생성 (25개)
+            for (let i = 0; i <= 24; i++) {
+                const totalMinutes = i * 30;
+                const timeString = minutesToTime(totalMinutes);
+                const pixelPosition = totalMinutes * 2; // 2px per minute
+
                 const timeLabel = document.createElement('div');
                 timeLabel.className = 'time-label';
                 timeLabel.style.top = pixelPosition + 'px';
                 timeLabel.textContent = timeString;
-                
+
                 timeLabelsContainer.appendChild(timeLabel);
             }
         }
@@ -835,43 +1060,25 @@
         // 각 day-column의 그리드 라인을 동적으로 생성
         function generateGridLines() {
             const dayColumns = document.querySelectorAll('.day-column');
-            
+
             dayColumns.forEach(column => {
                 const hourLines = column.querySelector('.hour-lines');
                 if (!hourLines) return;
-                
-                // 기존 라인들 제거
+
                 hourLines.innerHTML = '';
-                
-                // 08:00부터 19:00까지 5분 단위로 라인 생성
-                const startHour = 8;
-                const endHour = 19;
-                
-                for (let totalMinutes = 0; totalMinutes <= (endHour - startHour) * 60; totalMinutes += 5) {
-                    const pixelPosition = totalMinutes; // 5분 = 5px
-                    
-                    let lineElement;
-                    let lineClass;
-                    
-                    // 시간 단위 (00분) - 가장 진한 선
-                    if (totalMinutes % 60 === 0) {
-                        lineElement = document.createElement('div');
-                        lineClass = 'hour-line';
+
+                // 09:00부터 21:00까지 5분 단위로 라인 생성 (5분 = 10px)
+                for (let minutes = 0; minutes <= 720; minutes += 5) {
+                    const line = document.createElement('div');
+
+                    if (minutes % 60 === 0) {
+                        line.className = 'hour-line';
+                    } else {
+                        line.className = 'five-minute-line';
                     }
-                    // 10분 단위 (10분, 20분, 30분, 40분, 50분) - 중간 진하기
-                    else if (totalMinutes % 10 === 0) {
-                        lineElement = document.createElement('div');
-                        lineClass = 'ten-minute-line';
-                    }
-                    // 5분 단위 (5분, 15분, 25분, 35분, 45분, 55분) - 가장 옅은 선
-                    else {
-                        lineElement = document.createElement('div');
-                        lineClass = 'minute-line';
-                    }
-                    
-                    lineElement.className = lineClass;
-                    lineElement.style.top = pixelPosition + 'px';
-                    hourLines.appendChild(lineElement);
+
+                    line.style.top = (minutes * 2) + 'px';
+                    hourLines.appendChild(line);
                 }
             });
         }
@@ -880,18 +1087,18 @@
         function checkOverlap(column, newTop, newHeight, excludeBlock = null) {
             const existingBlocks = column.querySelectorAll('.drag-box');
             const newBottom = newTop + newHeight;
-            
+
             for (let block of existingBlocks) {
                 // 제외할 블럭이 있다면 건너뛰기
                 if (excludeBlock && block === excludeBlock) {
                     continue;
                 }
-                
+
                 const blockTop = parseInt(block.style.top);
                 const blockBottom = blockTop + parseInt(block.style.height);
-                
+
                 // 겹침 확인: 새 블럭의 시작이 기존 블럭 내부에 있거나, 새 블럭의 끝이 기존 블럭 내부에 있거나, 새 블럭이 기존 블럭을 완전히 포함하는 경우
-                if ((newTop >= blockTop && newTop < blockBottom) || 
+                if ((newTop >= blockTop && newTop < blockBottom) ||
                     (newBottom > blockTop && newBottom <= blockBottom) ||
                     (newTop <= blockTop && newBottom >= blockBottom)) {
                     return true; // 겹침 있음
@@ -905,12 +1112,12 @@
             const title = dragBox.dataset.title || '새 예약';
             const startTime = dragBox.dataset.startTime;
             const endTime = dragBox.dataset.endTime;
-            
+
             // 기존 내용 모두 제거
             dragBox.innerHTML = '';
-            
-            // 30분 이상일 때만 텍스트 표시
-            if (height >= 30) {
+
+            // 60px(30분) 이상일 때만 텍스트 표시
+            if (height >= 60) {
                 // 예약 제목 추가
                 const titleText = document.createElement('div');
                 titleText.style.cssText = `
@@ -926,7 +1133,7 @@
                 `;
                 titleText.textContent = title;
                 dragBox.appendChild(titleText);
-                
+
                 // 시간 텍스트 추가
                 const timeText = document.createElement('div');
                 timeText.style.cssText = `
@@ -943,18 +1150,18 @@
                 timeText.textContent = `${startTime} - ${endTime}`;
                 dragBox.appendChild(timeText);
             }
-            // 6-29분일 때는 중앙 핸들러만 표시
-            else if (height >= 6 && height < 30) {
+            // 12-59px(6-29분)일 때는 중앙 핸들러만 표시
+            else if (height >= 12 && height < 60) {
                 // 텍스트 없이 핸들러만 추가됨 (아래 조건에서)
             }
-            // 5분일 때는 배경색만 표시 (핸들러 없음)
-            else if (height === 5) {
+            // 10px(5분)일 때는 배경색만 표시 (핸들러 없음)
+            else if (height === 10) {
                 // 아무것도 추가하지 않음 - 배경색만 표시
                 return; // 핸들러도 추가하지 않음
             }
-            
-            // 6분 이상일 때만 흰색 핸들러 추가 (중앙정렬)
-            if (height >= 6) {
+
+            // 12px(6분) 이상일 때만 흰색 핸들러 추가 (중앙정렬)
+            if (height >= 12) {
                 // 시각적 핸들러 (정확한 피그마 디자인)
                 const indicator = document.createElement('div');
                 indicator.style.cssText = `
@@ -968,7 +1175,7 @@
                     border-radius: 19px;
                     pointer-events: none;
                 `;
-                
+
                 // 리사이즈 가능한 영역 (클릭하기 쉽도록 확장)
                 const resizeArea = document.createElement('div');
                 resizeArea.className = 'resize-handle';
@@ -983,21 +1190,21 @@
                     pointer-events: auto;
                     z-index: 100;
                 `;
-                
+
                 // 리사이즈 이벤트 구현 (5분 단위 스냅핑과 프리뷰 포함)
                 let isResizing = false;
                 let resizePreview = null;
-                
-                resizeArea.addEventListener('mousedown', function(e) {
+
+                resizeArea.addEventListener('mousedown', function (e) {
                     e.stopPropagation();
                     e.preventDefault();
-                    
+
                     isResizing = true;
                     const startHeight = parseInt(dragBox.style.height);
                     const startY = e.clientY;
                     const column = dragBox.parentElement;
                     const currentTop = parseInt(dragBox.style.top);
-                    
+
                     // 리사이즈 프리뷰 생성
                     resizePreview = document.createElement('div');
                     resizePreview.style.cssText = `
@@ -1013,23 +1220,23 @@
                         pointer-events: none;
                     `;
                     column.appendChild(resizePreview);
-                    
+
                     // 원본 블럭을 반투명하게
                     dragBox.style.opacity = '0.5';
-                    
+
                     function handleResize(e) {
                         if (!isResizing) return;
-                        
+
                         const deltaY = e.clientY - startY;
                         const rawNewHeight = startHeight + deltaY;
-                        const newHeight = Math.max(5, snapToFiveMinutes(rawNewHeight)); // 5분 단위 스냅핑
-                        
+                        const newHeight = Math.max(10, snapToFiveMinutes(rawNewHeight)); // 5분(10px) 단위 스냅핑
+
                         // 겹침 확인 (현재 블럭 제외)
                         const hasOverlap = checkOverlap(column, currentTop, newHeight, dragBox);
-                        
+
                         // 프리뷰 업데이트
                         resizePreview.style.height = newHeight + 'px';
-                        
+
                         // 겹침 여부에 따라 색상 변경
                         if (hasOverlap) {
                             resizePreview.style.background = 'rgba(244, 67, 54, 0.3)';
@@ -1039,50 +1246,51 @@
                             resizePreview.style.borderColor = '#2e7d32';
                         }
                     }
-                    
+
                     function stopResize() {
                         if (!isResizing) return;
                         isResizing = false;
-                        
+
                         let finalHeight = startHeight;
-                        
+
                         // 프리뷰가 있고 겹침이 없다면 실제 적용
                         if (resizePreview) {
                             const previewHeight = parseInt(resizePreview.style.height);
                             const hasOverlap = checkOverlap(column, currentTop, previewHeight, dragBox);
-                            
+
                             if (!hasOverlap) {
                                 finalHeight = previewHeight;
                                 dragBox.style.height = finalHeight + 'px';
-                                
+
                                 // 시간 데이터 업데이트
                                 const startMinutes = contentPixelsToMinutes(currentTop);
                                 const durationMinutes = pixelsToDuration(finalHeight);
                                 const endMinutes = startMinutes + durationMinutes;
-                                
+
                                 dragBox.dataset.startTime = minutesToTime(startMinutes);
                                 dragBox.dataset.endTime = minutesToTime(endMinutes);
                             }
-                            
+
                             // 프리뷰 제거
                             column.removeChild(resizePreview);
                             resizePreview = null;
                         }
-                        
+
                         // 원본 블럭 투명도 복원
                         dragBox.style.opacity = '1';
-                        
+
                         // 리사이즈 완료 후 완전 재구성
                         updateBlockContent(dragBox, finalHeight);
-                        
+                        if (dragBox.updatePopupTimes) dragBox.updatePopupTimes();
+
                         document.removeEventListener('mousemove', handleResize);
                         document.removeEventListener('mouseup', stopResize);
                     }
-                    
+
                     document.addEventListener('mousemove', handleResize);
                     document.addEventListener('mouseup', stopResize);
                 });
-                
+
                 dragBox.appendChild(indicator);
                 dragBox.appendChild(resizeArea);
             }
@@ -1092,24 +1300,24 @@
         function createAppointmentBlock(column, columnIndex, top, height, title = '새 예약', memo = '') {
             console.log('=== createAppointmentBlock 호출 ===');
             console.log('입력값 - top:', top, 'height:', height);
-            
+
             // 겹침 확인
             if (checkOverlap(column, top, height, null)) {
                 console.log('겹치는 블럭이 있어 생성할 수 없습니다.');
                 return null;
             }
-            
+
             const startMinutes = contentPixelsToMinutes(top);
             const durationMinutes = pixelsToDuration(height);
             const endMinutes = startMinutes + durationMinutes;
-            
+
             console.log('계산값 - startMinutes:', startMinutes, 'durationMinutes:', durationMinutes, 'endMinutes:', endMinutes);
-            
+
             const startTime = minutesToTime(startMinutes);
             const endTime = minutesToTime(endMinutes);
-            
+
             console.log('시간 - startTime:', startTime, 'endTime:', endTime);
-            
+
             const dragBox = document.createElement('div');
             dragBox.className = 'drag-box';
             dragBox.style.top = top + 'px';
@@ -1119,15 +1327,15 @@
             dragBox.dataset.dayIndex = columnIndex;
             dragBox.dataset.title = title;
             dragBox.dataset.memo = memo;
-            
+
             console.log('실제 스타일 - top:', dragBox.style.top, 'height:', dragBox.style.height);
             console.log('dataset - startTime:', dragBox.dataset.startTime, 'endTime:', dragBox.dataset.endTime);
-            
+
             // 블럭 내용 업데이트
             updateBlockContent(dragBox, height);
-            
+
             // 블럭 클릭 시 편집 팝업 (리사이즈 영역 제외)
-            dragBox.addEventListener('click', function(e) {
+            dragBox.addEventListener('click', function (e) {
                 console.log('블럭 클릭 이벤트');
                 // 리사이즈 핸들러 클릭은 무시
                 if (e.target.classList.contains('resize-handle')) {
@@ -1142,40 +1350,40 @@
             });
 
             // 블럭 이동 드래그 기능
-            dragBox.addEventListener('mousedown', function(e) {
+            dragBox.addEventListener('mousedown', function (e) {
                 console.log('블럭 mousedown 이벤트 발생!', e.target);
-                
+
                 // 리사이즈 핸들러 클릭은 무시
                 if (e.target.classList.contains('resize-handle')) {
                     console.log('리사이즈 핸들러 클릭 - 이동 무시');
                     return;
                 }
-                
+
                 console.log('블럭 이동 시작');
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 isMovingBlock = true;
                 movingBlock = dragBox;
                 hasMoved = false;
-                
+
                 // 원래 위치 저장
                 originalPosition = {
                     top: parseInt(dragBox.style.top),
                     column: dragBox.parentElement,
                     columnIndex: parseInt(dragBox.dataset.dayIndex)
                 };
-                
+
                 const rect = dragBox.getBoundingClientRect();
                 const columnRect = dragBox.parentElement.getBoundingClientRect();
-                
+
                 dragStartY = e.clientY - rect.top;
                 dragStartX = e.clientX - columnRect.left;
-                
+
                 // 드래그 중 블럭을 반투명하게
                 dragBox.style.opacity = '0.5';
                 dragBox.style.zIndex = '1000';
-                
+
                 // 이동 프리뷰 생성
                 movePreview = document.createElement('div');
                 movePreview.className = 'drag-preview';
@@ -1192,22 +1400,22 @@
                     display: none;
                 `;
             });
-            
+
             column.appendChild(dragBox);
-            
+
             console.log(`새 예약: ${['월', '화', '수', '목', '금', '토', '일'][columnIndex]}요일 ${startTime} - ${endTime}`);
             console.log('updateBlockContent 호출 전 - height:', dragBox.style.height);
-            
+
             // 블럭 내용 업데이트 후 최종 확인
             setTimeout(() => {
                 console.log('updateBlockContent 호출 후 - height:', dragBox.style.height);
                 console.log('=== 블럭 생성 완료 ===');
             }, 10);
-            
+
             return dragBox;
         }
 
-                // 팝업 표시 함수
+        // 팝업 표시 함수
         function showAppointmentPopup(appointmentBlock = null, isEdit = false) {
             // 기존 팝업이 있다면 제거
             const existingPopup = document.querySelector('.appointment-popup');
@@ -1218,35 +1426,35 @@
                     document.querySelector('.scheduler-container').removeChild(existingPopup);
                 }
             }
-            
+
             const popup = document.createElement('div');
             popup.className = 'appointment-popup';
-            
+
             // 블럭 우측에 위치시키기
             if (appointmentBlock && !isEdit) {
                 const blockRect = appointmentBlock.getBoundingClientRect();
                 const containerRect = document.querySelector('.scheduler-container').getBoundingClientRect();
-                
+
                 // 블럭 우측에 10px 간격으로 배치
                 const leftPosition = blockRect.right - containerRect.left + 10;
                 const topPosition = blockRect.top - containerRect.top;
-                
+
                 popup.style.position = 'absolute';
                 popup.style.left = leftPosition + 'px';
                 popup.style.top = topPosition + 'px';
                 popup.style.transform = 'none';
-                
+
                 // 화면 우측 끝을 벗어나지 않도록 조정
                 const popupWidth = 378;
                 const popupHeight = 500; // 예상 팝업 높이
                 const containerWidth = containerRect.width;
                 const containerHeight = containerRect.height;
-                
+
                 if (leftPosition + popupWidth > containerWidth) {
                     // 블럭 좌측에 배치
                     popup.style.left = (blockRect.left - containerRect.left - popupWidth - 10) + 'px';
                 }
-                
+
                 // 화면 하단을 벗어나지 않도록 조정
                 if (topPosition + popupHeight > containerHeight) {
                     popup.style.top = Math.max(0, containerHeight - popupHeight - 10) + 'px';
@@ -1258,30 +1466,34 @@
                 popup.style.left = '50%';
                 popup.style.transform = 'translate(-50%, -50%)';
             }
-            
+
             const dayNames = ['월', '화', '수', '목', '금', '토', '일'];
             let startTime = '', endTime = '', title = '', dayIndex = 0, memo = '';
-            
+
             if (appointmentBlock) {
                 startTime = appointmentBlock.dataset.startTime;
                 endTime = appointmentBlock.dataset.endTime;
                 dayIndex = parseInt(appointmentBlock.dataset.dayIndex);
-                title = isEdit ? (appointmentBlock.dataset.title || '새 예약') : '';
+                title = isEdit ? (appointmentBlock.dataset.title || selectedTreatmentName) : (appointmentBlock.dataset.title || selectedTreatmentName);
                 memo = appointmentBlock.dataset.memo || '';
             }
-            
+
             // 기본값 설정 (블럭이 없을 때만)
             if (!appointmentBlock) {
                 if (!startTime) startTime = '12:00';
                 if (!endTime) endTime = '14:00';
             }
-            
+
+            // 현재 선택된 진료항목 가져오기
+            const selectedTreatmentName = document.querySelector('.treatment-item-box.selected .treatment-name')?.textContent || '예방접종';
+            const displayTitle = title || selectedTreatmentName;
+
             popup.innerHTML = `
                 <div class="popup-content">
                     <div class="form-section">
                         <div class="section-label">진료항목</div>
                         <div class="custom-select" data-field="treatment">
-                            <span class="custom-select-text">예방접종</span>
+                            <span class="custom-select-text">${displayTitle}</span>
                             <svg class="custom-select-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                 <path d="M5 7.5L10 12.5L15 7.5" stroke="#959ba1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
@@ -1339,50 +1551,65 @@
                         <span class="error-text">Error / 14R</span>
                     </div>
                     <div class="action-buttons">
+                        ${isEdit ? '<button class="action-button secondary delete-btn" id="deleteBtn" style="color: #f44336; border-color: #ffcdd2; background-color: #fffaf9;">삭제</button>' : ''}
                         <button class="action-button secondary" id="cancelBtn">닫기</button>
                         <button class="action-button primary" id="saveBtn">저장</button>
                     </div>
                 </div>
             `;
-                        
+
             if (isEdit) {
-            document.body.appendChild(popup);
+                document.body.appendChild(popup);
             } else {
                 document.querySelector('.scheduler-container').appendChild(popup);
             }
-            
+
             // 이벤트 리스너
             const cancelBtn = popup.querySelector('#cancelBtn');
             const saveBtn = popup.querySelector('#saveBtn');
-            
+            const deleteBtn = popup.querySelector('#deleteBtn');
+
             // 시간 설정 변수들
             let currentStartTime = startTime;
             let currentEndTime = endTime;
-            
+
             function closePopup() {
                 // 이벤트 리스너 정리
                 document.removeEventListener('keydown', handleKeyDown);
                 document.removeEventListener('click', handleOutsideClick);
-                
+
+                if (appointmentBlock && appointmentBlock.updatePopupTimes) {
+                    delete appointmentBlock.updatePopupTimes;
+                }
+
                 if (isEdit) {
-                document.body.removeChild(popup);
+                    document.body.removeChild(popup);
                 } else {
                     document.querySelector('.scheduler-container').removeChild(popup);
                 }
             }
-            
+
             function cancelPopup() {
                 if (!isEdit && appointmentBlock) {
                     appointmentBlock.remove();
                 }
                 closePopup();
             }
-            
+
             // 시간 설정 드롭다운 이벤트
             const startTimeItem = popup.querySelector('[data-field="start-time"]');
             const endTimeItem = popup.querySelector('[data-field="end-time"]');
-            
-            startTimeItem.addEventListener('click', function() {
+
+            if (appointmentBlock) {
+                appointmentBlock.updatePopupTimes = function () {
+                    currentStartTime = appointmentBlock.dataset.startTime;
+                    currentEndTime = appointmentBlock.dataset.endTime;
+                    startTimeItem.querySelector('.time-setting-text').textContent = currentStartTime;
+                    endTimeItem.querySelector('.time-setting-text').textContent = currentEndTime;
+                };
+            }
+
+            startTimeItem.addEventListener('click', function () {
                 const currentTime = this.querySelector('.time-setting-text').textContent;
                 const newTime = prompt('시작 시간을 입력하세요 (HH:MM)', currentTime);
                 if (newTime && /^\d{2}:\d{2}$/.test(newTime)) {
@@ -1395,8 +1622,8 @@
                     }
                 }
             });
-            
-            endTimeItem.addEventListener('click', function() {
+
+            endTimeItem.addEventListener('click', function () {
                 const currentTime = this.querySelector('.time-setting-text').textContent;
                 const newTime = prompt('종료 시간을 입력하세요 (HH:MM)', currentTime);
                 if (newTime && /^\d{2}:\d{2}$/.test(newTime)) {
@@ -1409,14 +1636,14 @@
                     }
                 }
             });
-            
+
             cancelBtn.addEventListener('click', cancelPopup);
-            
+
             // 팝업 클릭시 이벤트 전파 방지
-            popup.addEventListener('click', function(e) {
+            popup.addEventListener('click', function (e) {
                 e.stopPropagation();
             });
-            
+
             // 팝업 외부 클릭 시 닫기
             function handleOutsideClick(e) {
                 if (!popup.contains(e.target)) {
@@ -1424,7 +1651,7 @@
                     document.removeEventListener('click', handleOutsideClick);
                 }
             }
-            
+
             // ESC 키로 팝업 닫기
             function handleKeyDown(e) {
                 if (e.key === 'Escape') {
@@ -1433,19 +1660,29 @@
                     document.removeEventListener('click', handleOutsideClick);
                 }
             }
-            
+
             document.addEventListener('keydown', handleKeyDown);
-            
+
             // 약간의 지연 후 외부 클릭 리스너 추가 (팝업 생성 클릭과 구분)
             setTimeout(() => {
                 document.addEventListener('click', handleOutsideClick);
             }, 100);
-            
-            saveBtn.addEventListener('click', function() {
+
+            // 삭제 버튼 이벤트 (편집 모드일 때만 존재)
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function () {
+                    if (appointmentBlock) {
+                        appointmentBlock.remove();
+                    }
+                    closePopup();
+                });
+            }
+
+            saveBtn.addEventListener('click', function () {
                 const treatmentType = popup.querySelector('[data-field="treatment"] .custom-select-text').textContent;
                 const interval = popup.querySelector('[data-field="interval"] .treatment-setting-text').textContent;
                 const capacity = popup.querySelector('[data-field="capacity"] .treatment-setting-text').textContent;
-                
+
                 // 시간 유효성 검사
                 if (currentStartTime >= currentEndTime) {
                     const errorArea = popup.querySelector('.action-error');
@@ -1454,35 +1691,35 @@
                     errorArea.style.visibility = 'visible';
                     return;
                 }
-                
+
                 if (appointmentBlock) {
                     console.log('=== 팝업 저장 시작 ===');
                     console.log('저장할 시간:', currentStartTime, '-', currentEndTime);
-                    
+
                     // 시간을 콘텐츠 영역 상대 위치로 변환 (오프셋 없음)
                     const newTop = timeToContentPixels(currentStartTime);
                     const endPixels = timeToContentPixels(currentEndTime);
-                    const newHeight = Math.max(5, endPixels - newTop);
-                    
+                    const newHeight = Math.max(10, endPixels - newTop);
+
                     console.log('변환된 픽셀:', 'newTop:', newTop, 'endPixels:', endPixels, 'newHeight:', newHeight);
                     console.log('기존 블럭:', 'top:', appointmentBlock.style.top, 'height:', appointmentBlock.style.height);
-                    
+
                     // 블럭 위치와 크기 업데이트
                     appointmentBlock.style.top = newTop + 'px';
                     appointmentBlock.style.height = newHeight + 'px';
-                    
+
                     console.log('업데이트 후:', 'top:', appointmentBlock.style.top, 'height:', appointmentBlock.style.height);
-                    
+
                     // 데이터 업데이트
                     appointmentBlock.dataset.startTime = currentStartTime;
                     appointmentBlock.dataset.endTime = currentEndTime;
                     appointmentBlock.dataset.title = treatmentType;
                     appointmentBlock.dataset.memo = `${interval} ${capacity}`;
-                    
+
                     // 블럭 내용 업데이트
                     updateBlockContent(appointmentBlock, newHeight);
                 }
-                
+
                 closePopup();
             });
         }
@@ -1490,71 +1727,72 @@
         // 스케줄 그리드에 드래그 기능 추가
         document.querySelectorAll('.day-column').forEach((column, columnIndex) => {
             // 마우스 다운 이벤트
-            column.addEventListener('mousedown', function(e) {
+            column.addEventListener('mousedown', function (e) {
                 // 블럭 이동 중이면 새 블럭 생성 방지
                 if (isMovingBlock) {
                     return;
                 }
-                
-                if (e.target !== column && !e.target.classList.contains('hour-lines') && !e.target.classList.contains('hour-line') && !e.target.classList.contains('minute-line')) {
+
+                if (e.target !== column && !e.target.classList.contains('hour-lines') && !e.target.classList.contains('hour-line') && !e.target.classList.contains('five-minute-line')) {
                     return;
                 }
-                
+
                 e.preventDefault();
                 isDragging = true;
                 currentColumn = column;
                 dragStartTime = Date.now();
                 hasMoved = false;
-                
+
                 const rect = column.getBoundingClientRect();
                 const rawY = e.clientY - rect.top;
                 dragStartY = snapToFiveMinutes(rawY); // 5분 단위로 스냅
                 dragStartX = e.clientX - rect.left;
-                
+
                 // 드래그 프리뷰 생성
                 dragPreview = document.createElement('div');
                 dragPreview.className = 'drag-preview';
                 dragPreview.style.left = '8px';
                 dragPreview.style.right = '8px';
                 dragPreview.style.top = dragStartY + 'px';
-                dragPreview.style.height = '5px'; // 최소 높이로 시작
+                dragPreview.style.height = '10px'; // 최소 높이로 시작 (5분=10px)
                 column.appendChild(dragPreview);
             });
 
             // 마우스 무브 이벤트
-            column.addEventListener('mousemove', function(e) {
+            column.addEventListener('mousemove', function (e) {
                 if (!isDragging || currentColumn !== column) return;
-                
+
                 e.preventDefault();
                 const rect = column.getBoundingClientRect();
                 const rawCurrentY = e.clientY - rect.top;
                 const currentY = snapToFiveMinutes(rawCurrentY); // 5분 단위로 스냅
-                
+
                 // 움직임 감지
-                if (Math.abs(currentY - dragStartY) > 5) {
+                if (Math.abs(currentY - dragStartY) > 10) {
                     hasMoved = true;
                 }
-                
+
                 const top = Math.min(dragStartY, currentY);
                 const height = Math.abs(currentY - dragStartY);
-                
+
                 if (dragPreview) {
                     dragPreview.style.top = top + 'px';
-                    dragPreview.style.height = Math.max(5, height) + 'px'; // 최소 5px
+                    dragPreview.style.height = Math.max(10, height) + 'px'; // 최소 10px (5분)
                 }
             });
 
             // 마우스 업 이벤트
-            column.addEventListener('mouseup', function(e) {
+            column.addEventListener('mouseup', function (e) {
                 if (!isDragging || currentColumn !== column) return;
-                
+
                 e.preventDefault();
                 const clickDuration = Date.now() - dragStartTime;
-                
+
                 // 클릭 감지 (200ms 이내, 움직임 없음)
                 if (!hasMoved && clickDuration < 200) {
                     // 클릭으로 5분 블럭 생성
-                    const newBlock = createAppointmentBlock(column, columnIndex, dragStartY, 5); // 5분 = 5px
+                    const selectedTreatmentName = document.querySelector('.treatment-item-box.selected .treatment-name')?.textContent || '예방접종';
+                    const newBlock = createAppointmentBlock(column, columnIndex, dragStartY, 10, selectedTreatmentName); // 5분 = 10px
                     if (newBlock) {
                         console.log('5분 블럭 생성 완료:', newBlock.dataset.startTime, '-', newBlock.dataset.endTime, '높이:', newBlock.style.height);
                         // 팝업 표시 (우측에)
@@ -1565,20 +1803,21 @@
                     const rect = column.getBoundingClientRect();
                     const rawEndY = e.clientY - rect.top;
                     const endY = snapToFiveMinutes(rawEndY); // 5분 단위로 스냅
-                    
+
                     const top = Math.min(dragStartY, endY);
-                    const height = Math.max(5, Math.abs(endY - dragStartY)); // 최소 5px
-                    
+                    const height = Math.max(10, Math.abs(endY - dragStartY)); // 최소 10px (5분)
+
                     // 새 드래그 박스 생성
-                    if (height >= 5) { // 최소 크기 확인
-                        const newBlock = createAppointmentBlock(column, columnIndex, top, height);
+                    if (height >= 10) { // 최소 크기 확인
+                        const selectedTreatmentName = document.querySelector('.treatment-item-box.selected .treatment-name')?.textContent || '예방접종';
+                        const newBlock = createAppointmentBlock(column, columnIndex, top, height, selectedTreatmentName);
                         if (newBlock) {
                             // 팝업 표시 (우측에)
                             setTimeout(() => showAppointmentPopup(newBlock, false), 100);
                         }
                     }
                 }
-                
+
                 // 정리
                 if (dragPreview) {
                     dragPreview.remove();
@@ -1591,17 +1830,17 @@
         });
 
         // 전역 마우스 무브 및 마우스 업 이벤트 (드래그 중 마우스가 영역을 벗어날 때 대비)
-        document.addEventListener('mousemove', function(e) {
+        document.addEventListener('mousemove', function (e) {
             // 블럭 이동 드래그 처리
             if (isMovingBlock && movingBlock) {
                 e.preventDefault();
                 hasMoved = true;
-                
+
                 // 어떤 컬럼 위에 있는지 찾기
                 const dayColumns = document.querySelectorAll('.day-column');
                 let targetColumn = null;
                 let targetColumnIndex = -1;
-                
+
                 for (let i = 0; i < dayColumns.length; i++) {
                     const columnRect = dayColumns[i].getBoundingClientRect();
                     if (e.clientX >= columnRect.left && e.clientX <= columnRect.right) {
@@ -1610,16 +1849,16 @@
                         break;
                     }
                 }
-                
+
                 if (targetColumn) {
                     const rect = targetColumn.getBoundingClientRect();
                     const rawY = e.clientY - rect.top - dragStartY;
                     const newTop = Math.max(0, snapToFiveMinutes(rawY));
-                    
-                    // 시간 범위 체크 (08:00-19:00)
-                    const maxTop = (19 - 8) * 60; // 660분 = 660px
+
+                    // 시간 범위 체크 (09:00-21:00)
+                    const maxTop = (21 - 9) * 60 * 2; // 720분 = 1440px
                     const blockHeight = parseInt(movingBlock.style.height);
-                    
+
                     if (newTop >= 0 && newTop + blockHeight <= maxTop) {
                         // 미리보기 표시
                         if (movePreview.parentElement !== targetColumn) {
@@ -1628,13 +1867,13 @@
                             }
                             targetColumn.appendChild(movePreview);
                         }
-                        
+
                         movePreview.style.top = newTop + 'px';
                         movePreview.style.display = 'block';
-                        
+
                         // 겹침 검사 (현재 이동 중인 블럭 제외)
                         const hasOverlap = checkOverlap(targetColumn, newTop, blockHeight, movingBlock);
-                        
+
                         if (hasOverlap) {
                             movePreview.style.background = 'rgba(244, 67, 54, 0.3)';
                             movePreview.style.borderColor = '#f44336';
@@ -1650,102 +1889,103 @@
                 }
                 return;
             }
-            
+
             // 기존 새 블럭 생성 드래그 처리
             if (!isDragging || !currentColumn || !dragPreview) return;
-            
+
             const rect = currentColumn.getBoundingClientRect();
             const rawCurrentY = e.clientY - rect.top;
-            
+
             // 영역을 벗어나면 드래그 중단
             if (rawCurrentY < 0 || rawCurrentY > rect.height) {
                 return;
             }
-            
+
             const currentY = snapToFiveMinutes(rawCurrentY); // 5분 단위로 스냅
-            
+
             // 움직임 감지
-            if (Math.abs(currentY - dragStartY) > 5) {
+            if (Math.abs(currentY - dragStartY) > 10) {
                 hasMoved = true;
             }
-            
+
             const top = Math.min(dragStartY, currentY);
             const height = Math.abs(currentY - dragStartY);
-            
+
             dragPreview.style.top = top + 'px';
-            dragPreview.style.height = Math.max(5, height) + 'px';
+            dragPreview.style.height = Math.max(10, height) + 'px';
         });
 
-        document.addEventListener('mouseup', function(e) {
+        document.addEventListener('mouseup', function (e) {
             // 블럭 이동 드래그 종료 처리
             if (isMovingBlock && movingBlock) {
                 e.preventDefault();
-                
+
                 let moved = false;
-                
+
                 if (movePreview && movePreview.style.display === 'block') {
                     const targetColumn = movePreview.parentElement;
                     const newTop = parseInt(movePreview.style.top);
                     const blockHeight = parseInt(movingBlock.style.height);
-                    
+
                     // 겹침 재검사 (최종 확인)
                     const hasOverlap = checkOverlap(targetColumn, newTop, blockHeight, movingBlock);
-                    
+
                     if (!hasOverlap) {
                         // 이동 성공
                         const targetColumnIndex = Array.from(document.querySelectorAll('.day-column')).indexOf(targetColumn);
-                        
+
                         // 원래 컬럼에서 제거
                         if (movingBlock.parentElement !== targetColumn) {
                             movingBlock.parentElement.removeChild(movingBlock);
                             targetColumn.appendChild(movingBlock);
                         }
-                        
+
                         // 위치 및 데이터 업데이트
                         movingBlock.style.top = newTop + 'px';
                         movingBlock.dataset.dayIndex = targetColumnIndex;
-                        
+
                         // 시간 데이터 업데이트  
                         const startMinutes = contentPixelsToMinutes(newTop); // 콘텐츠 영역 상대 위치
                         const durationMinutes = pixelsToDuration(blockHeight);
                         const endMinutes = startMinutes + durationMinutes;
-                        
+
                         movingBlock.dataset.startTime = minutesToTime(startMinutes);
                         movingBlock.dataset.endTime = minutesToTime(endMinutes);
-                        
+
                         // 블럭 내용 업데이트
                         updateBlockContent(movingBlock, blockHeight);
-                        
+                        if (movingBlock.updatePopupTimes) movingBlock.updatePopupTimes();
+
                         moved = true;
-                        
+
                         const dayNames = ['월', '화', '수', '목', '금', '토', '일'];
                         console.log(`예약 이동: ${dayNames[targetColumnIndex]}요일 ${movingBlock.dataset.startTime} - ${movingBlock.dataset.endTime}`);
                     }
                 }
-                
+
                 if (!moved) {
                     // 이동 실패 - 원래 위치로 복귀
                     console.log('겹치는 블럭이 있어 이동할 수 없습니다.');
                 }
-                
+
                 // 상태 초기화
                 movingBlock.style.opacity = '1';
                 movingBlock.style.zIndex = '10';
-                
+
                 if (movePreview) {
                     if (movePreview.parentElement) {
                         movePreview.parentElement.removeChild(movePreview);
                     }
                     movePreview = null;
                 }
-                
+
                 isMovingBlock = false;
                 movingBlock = null;
                 originalPosition = null;
                 hasMoved = false;
                 return;
             }
-            
+
             // 기존 새 블럭 생성 드래그 종료 처리
             if (isDragging) {
                 if (dragPreview) {
@@ -1760,19 +2000,30 @@
 
         // 버튼 클릭 이벤트
         document.querySelectorAll('.header-btn, .footer-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 console.log('Button clicked:', this.textContent);
             });
         });
 
-        // 날짜 드롭다운 클릭 이벤트
-        document.querySelector('.date-dropdown').addEventListener('click', function() {
-            console.log('Date dropdown clicked');
-        });
 
+        // 헤더와 스케줄 그리드의 세로 라인을 맞추기 위해 스크롤바 너비만큼 헤더에 패딩 추가
+        function syncHeaderPadding() {
+            const scheduleMain = document.querySelector('.schedule-main');
+            const dateHeaders = document.querySelector('.date-headers');
+            if (scheduleMain && dateHeaders) {
+                const scrollbarWidth = scheduleMain.offsetWidth - scheduleMain.clientWidth;
+                dateHeaders.style.paddingRight = scrollbarWidth + 'px';
+            }
+        }
+
+        // 페이지 로드 시 및 창 크기 변경 시 패딩 동기화
+        window.addEventListener('resize', syncHeaderPadding);
+        
         // 페이지 로드 시 시간 라벨과 그리드 라인 생성
         generateTimeLabels();
         generateGridLines();
+        syncHeaderPadding();
     </script>
 </body>
-</html> 
+
+</html>
