@@ -9,11 +9,7 @@
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -31,16 +27,15 @@
             overflow: hidden;
         }
 
-        /* 메인 스케줄 컨테이너 (우측 전체) */
         .main-schedule {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            min-width: 0; /* flex 자식의 최소 너비 보정 */
+            min-width: 0;
         }
 
-        /* 주간 헤더 영역 */
+        /* 주간 헤더 */
         .week-header {
             background: #ffffff;
             border-bottom: 1px solid #e5e8eb;
@@ -86,7 +81,7 @@
 
         .date-headers {
             display: flex;
-            height: 60px;
+            height: 72px;
         }
 
         .time-column-header {
@@ -100,40 +95,48 @@
             flex: 1;
             border-right: 1px solid #e5e8eb;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
+            justify-content: center;
+            padding: 8px 6px;
+            gap: 6px;
         }
 
-        .date-column:last-child {
-            border-right: none;
-        }
+        .date-column:last-child { border-right: none; }
 
         .date-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3744;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
         }
 
         .date-text .num {
-            font-size: 16px;
-            font-weight: 700;
-            color: #2c3744;
-            margin-left: 4px;
+            font-size: 13px;
+            font-weight: 400;
+            color: #888;
         }
 
-        .date-column.weekend.red .num,
-        .date-column.weekend.red .date-text {
-            color: #ff6b6b;
-        }
+        .date-column.weekend.red .date-text,
+        .date-column.weekend.red .date-text .num { color: #ff6b6b; }
 
-        .date-column.weekend.blue .num,
-        .date-column.weekend.blue .date-text {
-            color: #1976d2;
-        }
+        .date-column.weekend.blue .date-text,
+        .date-column.weekend.blue .date-text .num { color: #1976d2; }
 
+        .date-btn-row { display: flex; gap: 4px; }
         .copy-btn {
+            padding: 3px 10px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #555;
+        }
+        .copy-btn:hover { background: #f8f9fa; }
+        .delete-col-btn {
             padding: 4px 8px;
             font-size: 11px;
             border: 1px solid #ddd;
@@ -142,15 +145,9 @@
             cursor: pointer;
             color: #666;
         }
+        .delete-col-btn:hover { background: #fff0f0; color: #e53e3e; border-color: #f5c6c6; }
 
-        .copy-btn:hover {
-            background: #f8f9fa;
-        }
-
-        .header-right {
-            display: flex;
-            gap: 8px;
-        }
+        .header-right { display: flex; gap: 8px; }
 
         .header-btn {
             padding: 8px 16px;
@@ -161,14 +158,10 @@
             font-weight: 700;
             color: #2c3744;
             cursor: pointer;
-            transition: background-color 0.2s;
         }
+        .header-btn:hover { background: #f8f9fa; }
 
-        .header-btn:hover {
-            background: #f8f9fa;
-        }
-
-        /* 좌측 사이드바 */
+        /* ─── 좌측 사이드바 ─── */
         .left-sidebar {
             width: 280px;
             height: 100%;
@@ -178,9 +171,9 @@
             flex-direction: column;
             flex-shrink: 0;
             z-index: 50;
+            overflow-y: auto;
         }
 
-        /* 병원명 헤더 */
         .clinic-header {
             padding: 16px 20px;
             border-bottom: 1px solid #e5e8eb;
@@ -190,10 +183,31 @@
             font-size: 14px;
             font-weight: 600;
             color: #2c3744;
-            margin-bottom: 4px;
         }
 
-        /* 캘린더 영역 */
+        /* 설정 버튼 */
+        .setting-buttons {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e8eb;
+        }
+
+        .setting-btn {
+            flex: 1;
+            padding: 9px 6px;
+            border: 1px solid #dfdfdf;
+            background: #ffffff;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #2c3744;
+            cursor: pointer;
+            font-family: 'Pretendard', sans-serif;
+        }
+        .setting-btn:hover { background: #f8f9fa; }
+
+        /* 캘린더 */
         .calendar-section {
             padding: 16px 20px;
             border-bottom: 1px solid #e5e8eb;
@@ -213,18 +227,12 @@
             cursor: pointer;
             color: #666;
         }
-
-        .calendar-nav.prev {
-            left: 0;
-        }
-
-        .calendar-nav.next {
-            right: 0;
-        }
+        .calendar-nav.prev { left: 0; }
+        .calendar-nav.next { right: 0; }
 
         .calendar-title {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             color: #2c3744;
         }
 
@@ -232,125 +240,98 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 1px;
-            background: #e5e8eb;
-            border: 1px solid #e5e8eb;
         }
 
         .calendar-day-header {
-            background: #f8f9fa;
-            padding: 6px;
+            padding: 4px 2px;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             color: #666;
         }
 
         .calendar-day {
-            background: #ffffff;
-            padding: 6px;
+            padding: 4px 2px;
             text-align: center;
             font-size: 12px;
             cursor: pointer;
-            min-height: 28px;
+            min-height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 6px;
         }
-
-        .calendar-day:hover {
-            background: #f0f7ff;
-        }
+        .calendar-day:hover { background: #f0f7ff; }
 
         .calendar-day-header.weekend.red,
-        .calendar-day.weekend.red {
-            color: #ff6b6b;
-        }
+        .calendar-day.weekend.red { color: #ff6b6b; }
 
         .calendar-day-header.weekend.blue,
-        .calendar-day.weekend.blue {
-            color: #1976d2;
-        }
+        .calendar-day.weekend.blue { color: #1976d2; }
 
-        .calendar-day.selected-week {
-            background: #FFF8B6;
-        }
+        .calendar-day.selected-week { background: #FFF8B6; border-radius: 0; }
+        .calendar-day.selected-week.sel-start { border-radius: 6px 0 0 6px; }
+        .calendar-day.selected-week.sel-end { border-radius: 0 6px 6px 0; }
 
-        .calendar-day.selected {
-            background: #e3f2fd;
-            color: #1976d2;
-            font-weight: 600;
-        }
-
-        .calendar-day.other-month {
-            color: #ccc;
-        }
-
-        .calendar-day.today {
+        .calendar-day.selected { background: #e3f2fd; color: #1976d2; font-weight: 600; }
+        .calendar-day.other-month { color: #ccc; }
+        .calendar-day.today { font-weight: 700; color: #ff6b6b; }
+        .calendar-day.today-label {
+            font-size: 10px;
             font-weight: 700;
             color: #ff6b6b;
         }
 
-        /* 진료항목 섹션 */
-        .treatment-section {
-            flex: 1;
+        /* 예약현황 */
+        .appointment-summary {
             padding: 16px 20px;
+            flex: 1;
+        }
+
+        .summary-week-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 14px;
+        }
+
+        .summary-item {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f2f4;
             gap: 10px;
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
+        .summary-item:last-of-type { border-bottom: none; }
+
+        .summary-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            flex-shrink: 0;
         }
 
-        .section-title {
-            font-size: 13px;
+        .summary-name {
+            flex: 1;
+            font-size: 14px;
             font-weight: 600;
-            color: #666;
-            margin-bottom: 0px;
-        }
-
-        .settings-btn {
-            padding: 4px 8px;
-            font-size: 11px;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 4px;
-            cursor: pointer;
-            color: #666;
-        }
-
-        .settings-btn:hover {
-            background: #f8f9fa;
-        }
-
-        .treatment-item-box {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid #f0f2f4;
-            cursor: pointer;
-            gap: 12px;
-            background: white;
-            transition: all 0.2s;
-        }
-
-        .treatment-item-box.selected {
-            border-color: #fdd835;
-            background: #fffde7;
-        }
-
-        .treatment-name {
-            font-size: 13px;
-            font-weight: 500;
             color: #2c3744;
         }
 
-        /* 메인 스케줄 영역 */
+        .summary-count {
+            font-size: 14px;
+            color: #2c3744;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #2c3744;
+        }
+
+        /* ─── 스케줄 영역 ─── */
         .schedule-main {
             width: 100%;
             flex: 1;
@@ -364,7 +345,6 @@
             height: 1440px;
         }
 
-        /* 시간 라벨 */
         .time-labels {
             position: relative;
             flex-shrink: 0;
@@ -380,14 +360,12 @@
             width: 80px;
             font-size: 11px;
             color: #666;
-            font-weight: 400;
             height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* 스케줄 그리드 */
         .schedule-grid {
             flex: 1;
             position: relative;
@@ -398,570 +376,471 @@
         .day-column {
             flex: 1;
             position: relative;
-            border-right: 1px solid #e5e8eb;
-            background: #ffffff;
+            border-right: 1px solid #BCC0C6;
+            background: #E2E5E8;
             cursor: crosshair;
         }
+        .day-column:last-child { border-right: none; }
 
-        .day-column:last-child {
-            border-right: none;
-        }
-
-        /* 시간 줄눈 */
         .hour-lines {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
         }
 
         .hour-line {
             position: absolute;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: #E5E8EB;
+            left: 0; width: 100%; height: 1px;
+            background: #BCC0C6;
         }
 
         .five-minute-line {
             position: absolute;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: #f0f2f4;
+            left: 0; width: 100%; height: 1px;
+            background: #CDD0D4;
         }
 
-        /* 예약 블록 */
-        .appointment-block {
-            position: absolute;
-            left: 8px;
-            right: 8px;
-            background: #aed3ff;
-            border: 1px solid #549ef4;
-            border-radius: 4px;
-            padding: 8px;
-            z-index: 10;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            cursor: move;
-        }
-
-        .appointment-title {
-            font-size: 10px;
-            font-weight: 700;
-            color: #2c3744;
-            margin-bottom: 4px;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 10px;
-        }
-
-        .appointment-time {
-            font-size: 10px;
-            font-weight: 400;
-            color: #2c3744;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 10px;
-        }
-
-        .appointment-indicator {
-            position: absolute;
-            bottom: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
-            height: 2px;
-            background: #ffffff;
-            border-radius: 19px;
-        }
-
-        /* 하단 버튼 영역 */
-        .footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 66px;
-            background: #ffffff;
-            border-top: 1px solid #e5e5e5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .footer-btn {
-            padding: 10px 50px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .footer-btn.secondary {
-            background: #ffffff;
-            border: 1px solid #dfdfdf;
-            color: #2c3744;
-        }
-
-        .footer-btn.primary {
-            background: #ffed49;
-            border: none;
-            color: #2c3744;
-        }
-
-        .footer-btn:hover {
-            opacity: 0.9;
-        }
-
-        /* 드래그 박스 스타일 */
+        /* 드래그 박스 */
         .drag-box {
             position: absolute;
-            left: 8px;
-            right: 8px;
-            background: #aed3ff;
-            border: 1px solid #549ef4;
+            left: 8px; right: 8px;
+            background: #ffffff;
+            border: 1px solid #E5E7EB;
             border-radius: 4px;
             z-index: 20;
             pointer-events: auto;
-            padding: 8px;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Pretendard', sans-serif;
             cursor: move;
-        }
-
-        .drag-box[data-title="알레르기 클리닉"] {
-            background: #fff9c4;
-            border-color: #f9a825;
         }
 
         .drag-preview {
             position: absolute;
-            background: rgba(46, 125, 50, 0.2);
-            border: 2px dashed #2e7d32;
-            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.06);
+            border: 1px dashed #999;
+            border-radius: 6px;
             z-index: 15;
             pointer-events: none;
         }
 
-        /* 설정 팝업 스타일 - 피그마 디자인 기반 */
+        /* ─── 팝업 ─── */
         .appointment-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 378px;
-            height: auto;
+            position: absolute;
+            width: 380px;
             background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
             z-index: 2000;
-            padding: 0;
             overflow: hidden;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Pretendard', sans-serif;
         }
 
-        .popup-overlay {
-            display: none;
+        .popup-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 20px 20px 4px 20px;
         }
 
-        .popup-content {
-            padding: 24px;
-            background: #ffffff;
+        .popup-date-badge {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #92400E;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
         }
 
-        .form-section {
-            margin-bottom: 26px;
+        .popup-close-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #aaa;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            margin-top: 2px;
+        }
+        .popup-close-btn:hover { color: #555; }
+
+        .popup-body {
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
 
-        .form-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-label {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        .popup-section-label {
             font-size: 14px;
             font-weight: 700;
             color: #2c3744;
-            margin-bottom: 8px;
-            line-height: 18px;
-        }
-
-        .custom-select {
-            position: relative;
-            width: 100%;
-            height: 38px;
-            background: #ffffff;
-            border: 1px solid #dfdfdf;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            padding: 0 13px;
-            cursor: pointer;
-        }
-
-        .custom-select:hover {
-            border-color: #c0c0c0;
-        }
-
-        .custom-select-text {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            color: #2c3744;
-            line-height: 18px;
-            flex: 1;
-        }
-
-        .custom-select-icon {
-            width: 20px;
-            height: 20px;
-            margin-left: 8px;
+            margin-bottom: 10px;
         }
 
         .time-setting-row {
             display: flex;
-            gap: 12px;
+            gap: 8px;
         }
 
         .time-setting-item {
             flex: 1;
-            height: 38px;
+            height: 44px;
             background: #ffffff;
-            border: 1px solid #dfdfdf;
-            border-radius: 6px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
             display: flex;
-
             align-items: center;
-            padding: 0 13px;
+            padding: 0 12px;
             cursor: pointer;
+            gap: 6px;
         }
-
-        .time-setting-item:hover {
-            border-color: #c0c0c0;
-        }
+        .time-setting-item:hover { border-color: #c0c0c0; }
 
         .time-setting-text {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 15px;
+            font-weight: 500;
             color: #2c3744;
-            line-height: 18px;
         }
 
         .time-setting-secondary {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            color: #959ba1;
-            line-height: 18px;
-            margin-left: 4px;
-        }
-
-        .treatment-setting-row {
-            display: flex;
-            gap: 12px;
-        }
-
-        .treatment-setting-item {
+            font-size: 13px;
+            color: #9CA3AF;
             flex: 1;
-            height: 38px;
-            background: #ffffff;
-            border: 1px solid #dfdfdf;
-            border-radius: 6px;
+        }
+
+        .custom-select-icon { flex-shrink: 0; }
+
+        /* 체크박스 카드 */
+        .treatment-check-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .treatment-check-card {
+            border: 1px solid rgba(0,0,0,0.07);
+            border-radius: 10px;
+            padding: 13px 16px;
             display: flex;
             align-items: center;
-            padding: 0 13px;
+            gap: 10px;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .treatment-check-card:hover { border-color: rgba(0,0,0,0.15); }
+        .treatment-check-card.checked { border-color: rgba(0,0,0,0.12); }
+
+        .treatment-check-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #506073;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .check-card-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3744;
+        }
+
+        /* 동시 예약 */
+        .concurrent-label-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .concurrent-note {
+            font-size: 12px;
+            color: #9CA3AF;
+        }
+
+        .concurrent-radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             cursor: pointer;
         }
 
-        .treatment-setting-item:hover {
-            border-color: #c0c0c0;
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #506073;
+            cursor: pointer;
         }
 
-        .treatment-setting-text {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        .radio-item span {
             font-size: 14px;
-            font-weight: 400;
             color: #2c3744;
-            line-height: 18px;
         }
 
-        .treatment-setting-secondary {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            color: #959ba1;
-            line-height: 18px;
-            margin-left: 4px;
+        /* 팝업 하단 버튼 영역 */
+        .popup-footer {
+            padding: 4px 20px 20px;
         }
 
-        .popup-action-area {
-            padding: 0 24px 24px 24px;
-            background: #ffffff;
-        }
-
-        .action-error {
+        .popup-error {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
-            height: 20px;
+            gap: 4px;
+            min-height: 22px;
+            margin-bottom: 10px;
+            visibility: hidden;
         }
 
-        .error-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 4px;
-        }
-
-        .error-text {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
+        .popup-error-text {
+            font-size: 13px;
             color: #f55251;
-            line-height: 18px;
         }
 
-        .action-buttons {
+        .popup-btn-row {
             display: flex;
             gap: 8px;
-            justify-content: flex-end;
         }
 
-        .action-button {
-            width: 120px;
-            height: 38px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            line-height: 18px;
-            transition: all 0.2s ease;
-        }
-
-        .action-button.secondary {
-            background: #ffffff;
-            border: 1px solid #dfdfdf;
-            color: #2c3744;
-        }
-
-        .action-button.secondary:hover {
-            border-color: #c0c0c0;
-            background: #f8f9fa;
-        }
-
-        .action-button.primary {
+        .popup-save-btn {
+            flex: 1;
+            height: 52px;
             background: #506073;
             color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Pretendard', sans-serif;
+            transition: background 0.15s;
         }
+        .popup-save-btn:hover { background: #3d4a59; }
 
-        .action-button.primary:hover {
-            background: #3d4a59;
+        .popup-delete-btn {
+            height: 52px;
+            padding: 0 18px;
+            background: #ffffff;
+            color: #f44336;
+            border: 1px solid #ffcdd2;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Pretendard', sans-serif;
         }
+        .popup-delete-btn:hover { background: #fff5f5; }
     </style>
 </head>
 
 <body>
     <div class="scheduler-container">
-        <!-- 사이드바 -->
+        <!-- ─── 좌측 사이드바 ─── -->
         <div class="left-sidebar">
-            <!-- 병원명 헤더 -->
             <div class="clinic-header">
                 <div class="clinic-name">[김똑닥진료실/소아청소년과]</div>
             </div>
 
-            <!-- 캘린더 -->
+            <!-- 설정 버튼 -->
+            <div class="setting-buttons">
+                <button class="setting-btn">진료항목 설정</button>
+                <button class="setting-btn">운영 시간 설정</button>
+            </div>
+
+            <!-- 캘린더 (2025년 9월, 일요일 시작) -->
             <div class="calendar-section">
                 <div class="calendar-header">
                     <div class="calendar-nav prev">‹</div>
-                    <div class="calendar-title">2025년 7월</div>
+                    <div class="calendar-title">2025년 9월</div>
                     <div class="calendar-nav next">›</div>
                 </div>
 
                 <div class="calendar-grid">
+                    <!-- 요일 헤더: 일~토 (일요일 시작) -->
+                    <div class="calendar-day-header weekend red">일</div>
                     <div class="calendar-day-header">월</div>
                     <div class="calendar-day-header">화</div>
                     <div class="calendar-day-header">수</div>
                     <div class="calendar-day-header">목</div>
                     <div class="calendar-day-header">금</div>
                     <div class="calendar-day-header weekend blue">토</div>
-                    <div class="calendar-day-header weekend red">일</div>
 
-                    <div class="calendar-day other-month"></div>
-                    <div class="calendar-day other-month"></div>
-                    <div class="calendar-day other-month"></div>
-                    <div class="calendar-day other-month"></div>
-                    <div class="calendar-day other-month"></div>
-                    <div class="calendar-day weekend blue">1</div>
-                    <div class="calendar-day weekend red">2</div>
-
+                    <!-- 1주: 8/31(일) ~ 9/6(토) -->
+                    <div class="calendar-day other-month weekend red">31</div>
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day">2</div>
                     <div class="calendar-day">3</div>
                     <div class="calendar-day">4</div>
                     <div class="calendar-day">5</div>
-                    <div class="calendar-day">6</div>
-                    <div class="calendar-day">7</div>
-                    <div class="calendar-day weekend blue">8</div>
-                    <div class="calendar-day weekend red">9</div>
+                    <div class="calendar-day weekend blue">6</div>
 
+                    <!-- 2주: 9/7(일) ~ 9/13(토) -->
+                    <div class="calendar-day weekend red">7</div>
+                    <div class="calendar-day today-label">오늘</div>
+                    <div class="calendar-day">9</div>
                     <div class="calendar-day">10</div>
                     <div class="calendar-day">11</div>
                     <div class="calendar-day">12</div>
-                    <div class="calendar-day">13</div>
-                    <div class="calendar-day">14</div>
-                    <div class="calendar-day weekend blue">15</div>
-                    <div class="calendar-day weekend red">16</div>
+                    <div class="calendar-day weekend blue">13</div>
 
-                    <div class="calendar-day selected-week">17</div>
-                    <div class="calendar-day selected-week">18</div>
-                    <div class="calendar-day selected-week">19</div>
-                    <div class="calendar-day selected-week">20</div>
-                    <div class="calendar-day selected-week">21</div>
-                    <div class="calendar-day selected-week weekend blue">22</div>
-                    <div class="calendar-day selected-week weekend red">23</div>
+                    <!-- 3주: 9/14(일) ~ 9/20(토) -->
+                    <div class="calendar-day weekend red">14</div>
+                    <div class="calendar-day">15</div>
+                    <div class="calendar-day">16</div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day">19</div>
+                    <div class="calendar-day weekend blue">20</div>
 
-                    <div class="calendar-day">24</div>
-                    <div class="calendar-day">25</div>
-                    <div class="calendar-day">26</div>
-                    <div class="calendar-day">27</div>
-                    <div class="calendar-day">28</div>
-                    <div class="calendar-day weekend blue">29</div>
-                    <div class="calendar-day weekend red">30</div>
+                    <!-- 4주: 9/21(일) ~ 9/27(토) | 22~27 선택 주 -->
+                    <div class="calendar-day weekend red">21</div>
+                    <div class="calendar-day selected-week sel-start">22</div>
+                    <div class="calendar-day selected-week">23</div>
+                    <div class="calendar-day selected-week">24</div>
+                    <div class="calendar-day selected-week">25</div>
+                    <div class="calendar-day selected-week">26</div>
+                    <div class="calendar-day selected-week weekend blue">27</div>
 
-                    <div class="calendar-day">31</div>
+                    <!-- 5주: 9/28(일) ~ 9/30(화) | 28 선택 주 -->
+                    <div class="calendar-day selected-week sel-end weekend red">28</div>
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
                     <div class="calendar-day other-month"></div>
                     <div class="calendar-day other-month"></div>
                     <div class="calendar-day other-month"></div>
-                    <div class="calendar-day other-month"></div>
-                    <div class="calendar-day other-month"></div>
-                    <div class="calendar-day other-month"></div>
+                    <div class="calendar-day other-month weekend blue"></div>
                 </div>
             </div>
 
-            <!-- 진료항목 선택 -->
-            <div class="treatment-section">
-                <div class="section-header">
-                    <div class="section-title">진료항목</div>
-                    <button class="settings-btn">설정</button>
+            <!-- 예약현황 -->
+            <div class="appointment-summary">
+                <div class="summary-week-title">9월 22일 ~ 28일 예약현황</div>
+                <div class="summary-item">
+                    <span class="summary-dot" style="background:#FECACA;border:1.5px solid #F87171;"></span>
+                    <span class="summary-name">일반진료</span>
+                    <span class="summary-count">0명</span>
                 </div>
-
-                <div class="treatment-item-box selected" data-treatment="general">
-                    <span class="treatment-name">일반진료</span>
+                <div class="summary-item">
+                    <span class="summary-dot" style="background:#BFDBFE;border:1.5px solid #93C5FD;"></span>
+                    <span class="summary-name">발달클리닉</span>
+                    <span class="summary-count">0명</span>
                 </div>
-
-                <div class="treatment-item-box" data-treatment="pediatric">
-                    <span class="treatment-name">알레르기 클리닉</span>
+                <div class="summary-item">
+                    <span class="summary-dot" style="background:#9CA3AF;"></span>
+                    <span class="summary-name">현장예약</span>
+                    <span class="summary-count">0명</span>
+                </div>
+                <div class="summary-total">
+                    <span class="summary-count">0명</span>
                 </div>
             </div>
         </div>
 
+        <!-- ─── 메인 영역 ─── -->
         <div class="main-schedule">
-            <!-- 주간 헤더 -->
             <div class="week-header">
-                <div class="week-info">
-                    <div class="week-title-row">
-                        <span class="week-nav prev">‹</span>
-                        <h2 class="week-title">9월 17일 ~ 23일</h2>
-                        <span class="week-nav next">›</span>
-                        <span class="week-capacity">예약 가능 인원 수 10명</span>
-                    </div>
-                    <div class="header-right">
-                        <button class="header-btn">초기화</button>
-                        <button class="header-btn">스케줄 복사</button>
-                    </div>
-                </div>
+
                 <div class="date-headers">
                     <div class="time-column-header"></div>
                     <div class="date-column">
-                        <div class="date-text">월 <span class="num">17</span></div>
-                        <button class="copy-btn">복사</button>
+                        <div class="date-text">월 <span class="num">9/22</span></div>
+                        <div class="date-btn-row"><button class="copy-btn">복사</button><button class="delete-col-btn">삭제</button></div>
                     </div>
                     <div class="date-column">
-                        <div class="date-text">화 <span class="num">18</span></div>
-                        <button class="copy-btn">복사</button>
+                        <div class="date-text">화 <span class="num">9/23</span></div>
+                        <div class="date-btn-row"><button class="copy-btn">복사</button><button class="delete-col-btn">삭제</button></div>
                     </div>
                     <div class="date-column">
-                        <div class="date-text">수 <span class="num">19</span></div>
-                        <button class="copy-btn">복사</button>
+                        <div class="date-text">수 <span class="num">9/24</span></div>
+                        <div class="date-btn-row"><button class="copy-btn">복사</button><button class="delete-col-btn">삭제</button></div>
                     </div>
                     <div class="date-column">
-                        <div class="date-text">목 <span class="num">20</span></div>
-                        <button class="copy-btn">복사</button>
+                        <div class="date-text">목 <span class="num">9/25</span></div>
+                        <div class="date-btn-row"><button class="copy-btn">복사</button><button class="delete-col-btn">삭제</button></div>
                     </div>
                     <div class="date-column">
-                        <div class="date-text">금 <span class="num">21</span></div>
-                        <button class="copy-btn">복사</button>
+                        <div class="date-text">금 <span class="num">9/26</span></div>
+                        <div class="date-btn-row"><button class="copy-btn">복사</button><button class="delete-col-btn">삭제</button></div>
                     </div>
                     <div class="date-column weekend blue">
-                        <div class="date-text">토 <span class="num">22</span></div>
-                        <button class="copy-btn">복사</button>
+                        <div class="date-text">토 <span class="num">9/27</span></div>
+                        <div class="date-btn-row"><button class="copy-btn">복사</button><button class="delete-col-btn">삭제</button></div>
                     </div>
                     <div class="date-column weekend red">
-                        <div class="date-text">일 <span class="num">23</span></div>
-                        <button class="copy-btn">복사</button>
+                        <div class="date-text">일 <span class="num">9/28</span></div>
+                        <div class="date-btn-row"><button class="copy-btn">복사</button><button class="delete-col-btn">삭제</button></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 메인 스케줄 영역 -->
             <div class="schedule-main">
                 <div class="schedule-scroll-inner">
-                <!-- 시간 라벨 (동적 생성) -->
-                <div class="time-labels" id="timeLabels">
-                </div>
-
-                <!-- 스케줄 그리드 -->
-                <div class="schedule-grid">
-                    <!-- 월요일 -->
-                    <div class="day-column">
-                        <!-- 시간 줄눈 (동적 생성) -->
-                        <div class="hour-lines"></div>
-                    </div>
-
-                    <!-- 화요일 -->
-                    <div class="day-column">
-                        <div class="hour-lines"></div>
-                    </div>
-
-                    <!-- 수요일 -->
-                    <div class="day-column">
-                        <div class="hour-lines"></div>
-                    </div>
-
-                    <!-- 목요일 -->
-                    <div class="day-column">
-                        <div class="hour-lines"></div>
-                    </div>
-
-                    <!-- 금요일 -->
-                    <div class="day-column">
-                        <div class="hour-lines"></div>
-                    </div>
-
-                    <!-- 토요일 -->
-                    <div class="day-column">
-                        <div class="hour-lines"></div>
-                    </div>
-
-                    <!-- 일요일 -->
-                    <div class="day-column">
-                        <div class="hour-lines"></div>
+                    <div class="time-labels" id="timeLabels"></div>
+                    <div class="schedule-grid">
+                        <div class="day-column"><div class="hour-lines"></div></div>
+                        <div class="day-column"><div class="hour-lines"></div></div>
+                        <div class="day-column"><div class="hour-lines"></div></div>
+                        <div class="day-column"><div class="hour-lines"></div></div>
+                        <div class="day-column"><div class="hour-lines"></div></div>
+                        <div class="day-column"><div class="hour-lines"></div></div>
+                        <div class="day-column"><div class="hour-lines"></div></div>
                     </div>
                 </div>
-                </div><!-- schedule-scroll-inner -->
             </div>
         </div>
-
-        <!-- 하단 버튼 -->
-        <!-- <div class="footer">
-            <button class="footer-btn secondary">이전</button>
-            <button class="footer-btn primary">저장</button>
-        </div> -->
     </div>
 
     <script>
-        // 드래그 상태 변수
+        // 진료항목별 기준 색상 (RGB)
+        const treatmentColorMap = {
+            '일반진료':   [248, 113, 113],   // #F87171
+            '발달클리닉': [ 96, 165, 250],   // #60A5FA
+        };
+
+        // 블럭 색상 결정 (opacity 기반)
+        function getBlockStyle(treatments, hover = false) {
+            const colors = (treatments || []).map(t => treatmentColorMap[t]).filter(Boolean);
+
+            if (colors.length === 1) {
+                const [r, g, b] = colors[0];
+                const bgA = hover ? 0.5 : 0.4;
+                const bdA = hover ? 0.7 : 0.6;
+                return {
+                    bg:        `rgba(${r},${g},${b},${bgA})`,
+                    border:    `rgba(${r},${g},${b},${bdA})`,
+                    indicator: 'rgba(255,255,255,0.9)'
+                };
+            }
+            // 0개 또는 2개 이상 → 흰색
+            const a = hover ? 0.7 : 0.6;
+            return {
+                bg:        `rgba(255,255,255,${a})`,
+                border:    `rgba(200,205,212,${a})`,
+                indicator: '#C9CDD4'
+            };
+        }
+
+        // 블럭 색상 적용
+        function applyBlockColor(dragBox, hover = false) {
+            let treatments = [];
+            try { treatments = JSON.parse(dragBox.dataset.treatments || '[]'); } catch(e) {}
+            const s = getBlockStyle(treatments, hover);
+            dragBox.style.background   = s.bg;
+            dragBox.style.borderColor  = s.border;
+            return s;
+        }
+
+        // 진료항목 데이터
+        const treatmentData = [
+            { name: '일반진료', duration: 10 },
+            { name: '발달클리닉', duration: 30 }
+        ];
+
+        // 드래그 상태
         let isDragging = false;
         let dragStartY = 0;
         let dragStartX = 0;
@@ -970,319 +849,138 @@
         let dragStartTime = 0;
         let hasMoved = false;
 
-        // 블럭 이동 드래그 상태 변수
+        // 블럭 이동 상태
         let isMovingBlock = false;
         let movingBlock = null;
         let movePreview = null;
         let originalPosition = null;
 
-        // 진료항목 선택 이벤트
-        document.querySelectorAll('.treatment-item-box').forEach(item => {
-            item.addEventListener('click', function () {
-                // 모든 박스 선택 해제
-                document.querySelectorAll('.treatment-item-box').forEach(box => {
-                    box.classList.remove('selected');
-                });
-
-                // 클릭된 항목 선택
-                this.classList.add('selected');
-            });
-        });
-
-        // 5분 단위로 스냅핑하는 함수 (5분 = 10px)
         function snapToFiveMinutes(pixels) {
-            return Math.round(pixels / 10) * 10; // 10px(5분) 단위로 스냅
+            return Math.round(pixels / 10) * 10;
         }
 
-        // 화면 절대 위치를 분으로 변환하는 함수 (09:00 기준, 2px/min)
-        function pixelsToMinutes(pixels) {
-            const snappedPixels = snapToFiveMinutes(Math.max(0, pixels));
-            return Math.max(0, Math.min(snappedPixels / 2, 720)); // 09:00-21:00 = 720분
-        }
-
-        // 콘텐츠 영역 상대 위치를 분으로 변환하는 함수 (09:00 기준, 오프셋 없음)
         function contentPixelsToMinutes(pixels) {
-            const snappedPixels = snapToFiveMinutes(pixels);
-            return Math.max(0, Math.min(snappedPixels / 2, 720)); // 09:00-21:00 = 720분
+            return Math.max(0, Math.min(snapToFiveMinutes(pixels) / 2, 720));
         }
 
         function minutesToTime(minutes) {
-            const hours = Math.floor(minutes / 60) + 9; // 09:00부터 시작
+            const hours = Math.floor(minutes / 60) + 9;
             const mins = minutes % 60;
-            const limitedHours = Math.min(hours, 21);
-            const limitedMins = limitedHours === 21 ? 0 : mins;
-            return `${limitedHours.toString().padStart(2, '0')}:${limitedMins.toString().padStart(2, '0')}`;
+            const h = Math.min(hours, 21);
+            const m = h === 21 ? 0 : mins;
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
         }
 
-        // 시간을 콘텐츠 영역 절대 픽셀 위치로 변환 (09:00 기준, 2px/min)
-        function timeToPixels(timeString) {
-            const [hours, minutes] = timeString.split(':').map(Number);
-            const limitedHours = Math.min(hours, 21);
-            const limitedMinutes = limitedHours === 21 ? 0 : minutes;
-            const totalMinutes = (limitedHours - 9) * 60 + limitedMinutes;
-            return totalMinutes * 2;
-        }
-
-        // 시간을 콘텐츠 영역 상대 픽셀 위치로 변환 (09:00 기준, 오프셋 없음)
         function timeToContentPixels(timeString) {
-            const [hours, minutes] = timeString.split(':').map(Number);
-            const limitedHours = Math.min(hours, 21);
-            const limitedMinutes = limitedHours === 21 ? 0 : minutes;
-            const totalMinutes = (limitedHours - 9) * 60 + limitedMinutes;
-            return totalMinutes * 2;
+            const [h, m] = timeString.split(':').map(Number);
+            const lh = Math.min(h, 21);
+            const lm = lh === 21 ? 0 : m;
+            return ((lh - 9) * 60 + lm) * 2;
         }
 
-        // 픽셀을 순수 분 단위로 변환 (높이/duration 계산용, 오프셋 없음)
         function pixelsToDuration(pixels) {
-            return Math.max(5, snapToFiveMinutes(pixels) / 2); // 최소 5분, 5분 단위 스냅
+            return Math.max(5, snapToFiveMinutes(pixels) / 2);
         }
 
-        // 시간 라벨 생성 (09:00~21:00, 30분 단위, 2px/min)
         function generateTimeLabels() {
-            const timeLabelsContainer = document.getElementById('timeLabels');
-            timeLabelsContainer.innerHTML = '';
-
-            // 09:00부터 21:00까지 30분 간격으로 라벨 생성 (25개)
+            const container = document.getElementById('timeLabels');
+            container.innerHTML = '';
             for (let i = 0; i <= 24; i++) {
-                const totalMinutes = i * 30;
-                const timeString = minutesToTime(totalMinutes);
-                const pixelPosition = totalMinutes * 2; // 2px per minute
-
-                const timeLabel = document.createElement('div');
-                timeLabel.className = 'time-label';
-                timeLabel.style.top = pixelPosition + 'px';
-                timeLabel.textContent = timeString;
-
-                timeLabelsContainer.appendChild(timeLabel);
+                const mins = i * 30;
+                const el = document.createElement('div');
+                el.className = 'time-label';
+                el.style.top = (mins * 2) + 'px';
+                el.textContent = minutesToTime(mins);
+                container.appendChild(el);
             }
         }
 
-        // 각 day-column의 그리드 라인을 동적으로 생성
         function generateGridLines() {
-            const dayColumns = document.querySelectorAll('.day-column');
-
-            dayColumns.forEach(column => {
-                const hourLines = column.querySelector('.hour-lines');
-                if (!hourLines) return;
-
-                hourLines.innerHTML = '';
-
-                // 09:00부터 21:00까지 5분 단위로 라인 생성 (5분 = 10px)
-                for (let minutes = 0; minutes <= 720; minutes += 5) {
+            document.querySelectorAll('.day-column').forEach(col => {
+                const hl = col.querySelector('.hour-lines');
+                if (!hl) return;
+                hl.innerHTML = '';
+                for (let m = 0; m <= 720; m += 5) {
                     const line = document.createElement('div');
-
-                    if (minutes % 60 === 0) {
-                        line.className = 'hour-line';
-                    } else {
-                        line.className = 'five-minute-line';
-                    }
-
-                    line.style.top = (minutes * 2) + 'px';
-                    hourLines.appendChild(line);
+                    line.className = m % 60 === 0 ? 'hour-line' : 'five-minute-line';
+                    line.style.top = (m * 2) + 'px';
+                    hl.appendChild(line);
                 }
             });
         }
 
-        // 블럭 겹침 확인 함수
         function checkOverlap(column, newTop, newHeight, excludeBlock = null) {
-            const existingBlocks = column.querySelectorAll('.drag-box');
             const newBottom = newTop + newHeight;
-
-            for (let block of existingBlocks) {
-                // 제외할 블럭이 있다면 건너뛰기
-                if (excludeBlock && block === excludeBlock) {
-                    continue;
-                }
-
-                const blockTop = parseInt(block.style.top);
-                const blockBottom = blockTop + parseInt(block.style.height);
-
-                // 겹침 확인: 새 블럭의 시작이 기존 블럭 내부에 있거나, 새 블럭의 끝이 기존 블럭 내부에 있거나, 새 블럭이 기존 블럭을 완전히 포함하는 경우
-                if ((newTop >= blockTop && newTop < blockBottom) ||
-                    (newBottom > blockTop && newBottom <= blockBottom) ||
-                    (newTop <= blockTop && newBottom >= blockBottom)) {
-                    return true; // 겹침 있음
-                }
+            for (let block of column.querySelectorAll('.drag-box')) {
+                if (excludeBlock && block === excludeBlock) continue;
+                const bt = parseInt(block.style.top);
+                const bb = bt + parseInt(block.style.height);
+                if ((newTop >= bt && newTop < bb) || (newBottom > bt && newBottom <= bb) || (newTop <= bt && newBottom >= bb)) return true;
             }
-            return false; // 겹침 없음
+            return false;
         }
 
-        // 블럭 내용을 높이에 따라 업데이트하는 함수
         function updateBlockContent(dragBox, height) {
-            const title = dragBox.dataset.title || '새 예약';
-            const startTime = dragBox.dataset.startTime;
-            const endTime = dragBox.dataset.endTime;
-
-            // 기존 내용 모두 제거
             dragBox.innerHTML = '';
 
-            // 60px(30분) 이상일 때만 텍스트 표시
-            if (height >= 60) {
-                // 예약 제목 추가
-                const titleText = document.createElement('div');
-                titleText.style.cssText = `
-                    position: absolute;
-                    top: 2px;
-                    left: 4px;
-                    font-size: 10px;
-                    font-weight: 700;
-                    color: #2c3744;
-                    pointer-events: none;
-                    line-height: 10px;
-                    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                `;
-                titleText.textContent = title;
-                dragBox.appendChild(titleText);
+            // 색상 적용 (normal 상태)
+            const style = applyBlockColor(dragBox, false);
 
-                // 시간 텍스트 추가
-                const timeText = document.createElement('div');
-                timeText.style.cssText = `
-                    position: absolute;
-                    top: 14px;
-                    left: 4px;
-                    font-size: 10px;
-                    font-weight: 400;
-                    color: #2c3744;
-                    pointer-events: none;
-                    line-height: 10px;
-                    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                `;
-                timeText.textContent = `${startTime} - ${endTime}`;
-                dragBox.appendChild(timeText);
-            }
-            // 12-59px(6-29분)일 때는 중앙 핸들러만 표시
-            else if (height >= 12 && height < 60) {
-                // 텍스트 없이 핸들러만 추가됨 (아래 조건에서)
-            }
-            // 10px(5분)일 때는 배경색만 표시 (핸들러 없음)
-            else if (height === 10) {
-                // 아무것도 추가하지 않음 - 배경색만 표시
-                return; // 핸들러도 추가하지 않음
-            }
+            if (height <= 10) return;
 
-            // 12px(6분) 이상일 때만 흰색 핸들러 추가 (중앙정렬)
             if (height >= 12) {
-                // 시각적 핸들러 (정확한 피그마 디자인)
                 const indicator = document.createElement('div');
-                indicator.style.cssText = `
-                    position: absolute;
-                    bottom: 6px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 22px;
-                    height: 2px;
-                    background: #ffffff;
-                    border-radius: 19px;
-                    pointer-events: none;
-                `;
+                indicator.style.cssText = `position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:22px;height:2px;background:${style.indicator};border-radius:19px;pointer-events:none;`;
 
-                // 리사이즈 가능한 영역 (클릭하기 쉽도록 확장)
                 const resizeArea = document.createElement('div');
                 resizeArea.className = 'resize-handle';
-                resizeArea.style.cssText = `
-                    position: absolute;
-                    bottom: 0px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 30px;
-                    height: 14px;
-                    cursor: ns-resize;
-                    pointer-events: auto;
-                    z-index: 100;
-                `;
+                resizeArea.style.cssText = 'position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:30px;height:14px;cursor:ns-resize;pointer-events:auto;z-index:100;';
 
-                // 리사이즈 이벤트 구현 (5분 단위 스냅핑과 프리뷰 포함)
                 let isResizing = false;
                 let resizePreview = null;
 
                 resizeArea.addEventListener('mousedown', function (e) {
                     e.stopPropagation();
                     e.preventDefault();
-
                     isResizing = true;
                     const startHeight = parseInt(dragBox.style.height);
                     const startY = e.clientY;
                     const column = dragBox.parentElement;
                     const currentTop = parseInt(dragBox.style.top);
 
-                    // 리사이즈 프리뷰 생성
                     resizePreview = document.createElement('div');
-                    resizePreview.style.cssText = `
-                        position: absolute;
-                        left: 8px;
-                        right: 8px;
-                        top: ${currentTop}px;
-                        height: ${startHeight}px;
-                        background: rgba(46, 125, 50, 0.3);
-                        border: 2px dashed #2e7d32;
-                        border-radius: 4px;
-                        z-index: 999;
-                        pointer-events: none;
-                    `;
+                    resizePreview.style.cssText = `position:absolute;left:8px;right:8px;top:${currentTop}px;height:${startHeight}px;background:rgba(0,0,0,0.06);border:2px dashed #999;border-radius:4px;z-index:999;pointer-events:none;`;
                     column.appendChild(resizePreview);
-
-                    // 원본 블럭을 반투명하게
                     dragBox.style.opacity = '0.5';
 
                     function handleResize(e) {
                         if (!isResizing) return;
-
-                        const deltaY = e.clientY - startY;
-                        const rawNewHeight = startHeight + deltaY;
-                        const newHeight = Math.max(10, snapToFiveMinutes(rawNewHeight)); // 5분(10px) 단위 스냅핑
-
-                        // 겹침 확인 (현재 블럭 제외)
-                        const hasOverlap = checkOverlap(column, currentTop, newHeight, dragBox);
-
-                        // 프리뷰 업데이트
-                        resizePreview.style.height = newHeight + 'px';
-
-                        // 겹침 여부에 따라 색상 변경
-                        if (hasOverlap) {
-                            resizePreview.style.background = 'rgba(244, 67, 54, 0.3)';
-                            resizePreview.style.borderColor = '#f44336';
-                        } else {
-                            resizePreview.style.background = 'rgba(46, 125, 50, 0.3)';
-                            resizePreview.style.borderColor = '#2e7d32';
-                        }
+                        const newH = Math.max(10, snapToFiveMinutes(startHeight + e.clientY - startY));
+                        const overlap = checkOverlap(column, currentTop, newH, dragBox);
+                        resizePreview.style.height = newH + 'px';
+                        resizePreview.style.background = overlap ? 'rgba(244,67,54,0.3)' : 'rgba(0,0,0,0.06)';
+                        resizePreview.style.borderColor = overlap ? '#f44336' : '#999';
                     }
 
                     function stopResize() {
                         if (!isResizing) return;
                         isResizing = false;
-
-                        let finalHeight = startHeight;
-
-                        // 프리뷰가 있고 겹침이 없다면 실제 적용
+                        let finalH = startHeight;
                         if (resizePreview) {
-                            const previewHeight = parseInt(resizePreview.style.height);
-                            const hasOverlap = checkOverlap(column, currentTop, previewHeight, dragBox);
-
-                            if (!hasOverlap) {
-                                finalHeight = previewHeight;
-                                dragBox.style.height = finalHeight + 'px';
-
-                                // 시간 데이터 업데이트
-                                const startMinutes = contentPixelsToMinutes(currentTop);
-                                const durationMinutes = pixelsToDuration(finalHeight);
-                                const endMinutes = startMinutes + durationMinutes;
-
-                                dragBox.dataset.startTime = minutesToTime(startMinutes);
-                                dragBox.dataset.endTime = minutesToTime(endMinutes);
+                            const ph = parseInt(resizePreview.style.height);
+                            if (!checkOverlap(column, currentTop, ph, dragBox)) {
+                                finalH = ph;
+                                dragBox.style.height = finalH + 'px';
+                                const sm = contentPixelsToMinutes(currentTop);
+                                dragBox.dataset.startTime = minutesToTime(sm);
+                                dragBox.dataset.endTime = minutesToTime(sm + pixelsToDuration(finalH));
                             }
-
-                            // 프리뷰 제거
                             column.removeChild(resizePreview);
                             resizePreview = null;
                         }
-
-                        // 원본 블럭 투명도 복원
                         dragBox.style.opacity = '1';
-
-                        // 리사이즈 완료 후 완전 재구성
-                        updateBlockContent(dragBox, finalHeight);
+                        updateBlockContent(dragBox, finalH);
                         if (dragBox.updatePopupTimes) dragBox.updatePopupTimes();
-
                         document.removeEventListener('mousemove', handleResize);
                         document.removeEventListener('mouseup', stopResize);
                     }
@@ -1296,27 +994,24 @@
             }
         }
 
-        // 예약 블럭을 생성하는 함수
-        function createAppointmentBlock(column, columnIndex, top, height, title = '새 예약', memo = '') {
-            console.log('=== createAppointmentBlock 호출 ===');
-            console.log('입력값 - top:', top, 'height:', height);
+        // 날짜 텍스트
+        function getDateText(columnIndex) {
+            const days = ['월', '화', '수', '목', '금', '토', '일'];
+            const cols = document.querySelectorAll('.date-column');
+            const weekTitle = document.querySelector('.week-title')?.textContent || '';
+            const m = weekTitle.match(/(\d+)월/);
+            const month = m ? m[1] : '9';
+            const num = cols[columnIndex]?.querySelector('.num')?.textContent || '';
+            return `${month}월 ${num}일 (${days[columnIndex]})`;
+        }
 
-            // 겹침 확인
-            if (checkOverlap(column, top, height, null)) {
-                console.log('겹치는 블럭이 있어 생성할 수 없습니다.');
-                return null;
-            }
-
-            const startMinutes = contentPixelsToMinutes(top);
-            const durationMinutes = pixelsToDuration(height);
-            const endMinutes = startMinutes + durationMinutes;
-
-            console.log('계산값 - startMinutes:', startMinutes, 'durationMinutes:', durationMinutes, 'endMinutes:', endMinutes);
-
-            const startTime = minutesToTime(startMinutes);
-            const endTime = minutesToTime(endMinutes);
-
-            console.log('시간 - startTime:', startTime, 'endTime:', endTime);
+        // 예약 블럭 생성
+        function createAppointmentBlock(column, columnIndex, top, height, title = '새 예약') {
+            if (checkOverlap(column, top, height, null)) return null;
+            const sm = contentPixelsToMinutes(top);
+            const dur = pixelsToDuration(height);
+            const startTime = minutesToTime(sm);
+            const endTime = minutesToTime(sm + dur);
 
             const dragBox = document.createElement('div');
             dragBox.className = 'drag-box';
@@ -1326,416 +1021,288 @@
             dragBox.dataset.endTime = endTime;
             dragBox.dataset.dayIndex = columnIndex;
             dragBox.dataset.title = title;
-            dragBox.dataset.memo = memo;
+            dragBox.dataset.treatments = JSON.stringify(treatmentData.map(t => t.name));
+            dragBox.dataset.concurrent = '1';
 
-            console.log('실제 스타일 - top:', dragBox.style.top, 'height:', dragBox.style.height);
-            console.log('dataset - startTime:', dragBox.dataset.startTime, 'endTime:', dragBox.dataset.endTime);
-
-            // 블럭 내용 업데이트
             updateBlockContent(dragBox, height);
 
-            // 블럭 클릭 시 편집 팝업 (리사이즈 영역 제외)
-            dragBox.addEventListener('click', function (e) {
-                console.log('블럭 클릭 이벤트');
-                // 리사이즈 핸들러 클릭은 무시
-                if (e.target.classList.contains('resize-handle')) {
-                    return;
-                }
-                // 드래그 중이었다면 클릭 무시
-                if (hasMoved) {
-                    console.log('드래그 후라서 클릭 무시');
-                    return;
-                }
-                showAppointmentPopup(dragBox, true);
+            // hover 색상 (opacity 스펙 적용)
+            dragBox.addEventListener('mouseenter', function () {
+                if (!isMovingBlock) applyBlockColor(dragBox, true);
+            });
+            dragBox.addEventListener('mouseleave', function () {
+                if (!isMovingBlock) applyBlockColor(dragBox, false);
             });
 
-            // 블럭 이동 드래그 기능
+            dragBox.addEventListener('click', function (e) {
+                if (e.target.classList.contains('resize-handle')) return;
+                if (hasMoved) return;
+                showPopup(dragBox, true);
+            });
+
             dragBox.addEventListener('mousedown', function (e) {
-                console.log('블럭 mousedown 이벤트 발생!', e.target);
-
-                // 리사이즈 핸들러 클릭은 무시
-                if (e.target.classList.contains('resize-handle')) {
-                    console.log('리사이즈 핸들러 클릭 - 이동 무시');
-                    return;
-                }
-
-                console.log('블럭 이동 시작');
+                if (e.target.classList.contains('resize-handle')) return;
                 e.preventDefault();
                 e.stopPropagation();
-
                 isMovingBlock = true;
                 movingBlock = dragBox;
                 hasMoved = false;
-
-                // 원래 위치 저장
-                originalPosition = {
-                    top: parseInt(dragBox.style.top),
-                    column: dragBox.parentElement,
-                    columnIndex: parseInt(dragBox.dataset.dayIndex)
-                };
-
+                originalPosition = { top: parseInt(dragBox.style.top), column: dragBox.parentElement, columnIndex: parseInt(dragBox.dataset.dayIndex) };
                 const rect = dragBox.getBoundingClientRect();
-                const columnRect = dragBox.parentElement.getBoundingClientRect();
-
+                const cr = dragBox.parentElement.getBoundingClientRect();
                 dragStartY = e.clientY - rect.top;
-                dragStartX = e.clientX - columnRect.left;
-
-                // 드래그 중 블럭을 반투명하게
+                dragStartX = e.clientX - cr.left;
                 dragBox.style.opacity = '0.5';
                 dragBox.style.zIndex = '1000';
-
-                // 이동 프리뷰 생성
                 movePreview = document.createElement('div');
                 movePreview.className = 'drag-preview';
-                movePreview.style.cssText = `
-                    position: absolute;
-                    left: 8px;
-                    right: 8px;
-                    height: ${dragBox.style.height};
-                    background: rgba(46, 125, 50, 0.3);
-                    border: 2px dashed #2e7d32;
-                    border-radius: 4px;
-                    z-index: 999;
-                    pointer-events: none;
-                    display: none;
-                `;
+                movePreview.style.cssText = `position:absolute;left:8px;right:8px;height:${dragBox.style.height};background:rgba(0,0,0,0.06);border:2px dashed #999;border-radius:4px;z-index:999;pointer-events:none;display:none;`;
             });
 
             column.appendChild(dragBox);
-
-            console.log(`새 예약: ${['월', '화', '수', '목', '금', '토', '일'][columnIndex]}요일 ${startTime} - ${endTime}`);
-            console.log('updateBlockContent 호출 전 - height:', dragBox.style.height);
-
-            // 블럭 내용 업데이트 후 최종 확인
-            setTimeout(() => {
-                console.log('updateBlockContent 호출 후 - height:', dragBox.style.height);
-                console.log('=== 블럭 생성 완료 ===');
-            }, 10);
-
             return dragBox;
         }
 
-        // 팝업 표시 함수
-        function showAppointmentPopup(appointmentBlock = null, isEdit = false) {
-            // 기존 팝업이 있다면 제거
-            const existingPopup = document.querySelector('.appointment-popup');
-            if (existingPopup) {
-                if (existingPopup.parentElement === document.body) {
-                    document.body.removeChild(existingPopup);
-                } else if (existingPopup.parentElement === document.querySelector('.scheduler-container')) {
-                    document.querySelector('.scheduler-container').removeChild(existingPopup);
-                }
-            }
+        // ─── 팝업 ───
+        function showPopup(block = null, isEdit = false) {
+            document.querySelector('.appointment-popup')?.remove();
 
             const popup = document.createElement('div');
             popup.className = 'appointment-popup';
 
-            // 블럭 우측에 위치시키기
-            if (appointmentBlock && !isEdit) {
-                const blockRect = appointmentBlock.getBoundingClientRect();
-                const containerRect = document.querySelector('.scheduler-container').getBoundingClientRect();
+            let startTime = '09:00', endTime = '09:30', dayIndex = 0;
+            let checkedTreatments = treatmentData.map(t => t.name);
+            let concurrentCount = 1;
 
-                // 블럭 우측에 10px 간격으로 배치
-                const leftPosition = blockRect.right - containerRect.left + 10;
-                const topPosition = blockRect.top - containerRect.top;
-
-                popup.style.position = 'absolute';
-                popup.style.left = leftPosition + 'px';
-                popup.style.top = topPosition + 'px';
-                popup.style.transform = 'none';
-
-                // 화면 우측 끝을 벗어나지 않도록 조정
-                const popupWidth = 378;
-                const popupHeight = 500; // 예상 팝업 높이
-                const containerWidth = containerRect.width;
-                const containerHeight = containerRect.height;
-
-                if (leftPosition + popupWidth > containerWidth) {
-                    // 블럭 좌측에 배치
-                    popup.style.left = (blockRect.left - containerRect.left - popupWidth - 10) + 'px';
-                }
-
-                // 화면 하단을 벗어나지 않도록 조정
-                if (topPosition + popupHeight > containerHeight) {
-                    popup.style.top = Math.max(0, containerHeight - popupHeight - 10) + 'px';
-                }
-            } else if (isEdit) {
-                // 편집 팝업은 화면 중앙에 표시
-                popup.style.position = 'fixed';
-                popup.style.top = '50%';
-                popup.style.left = '50%';
-                popup.style.transform = 'translate(-50%, -50%)';
+            if (block) {
+                startTime = block.dataset.startTime || startTime;
+                endTime = block.dataset.endTime || endTime;
+                dayIndex = parseInt(block.dataset.dayIndex) || 0;
+                try { checkedTreatments = JSON.parse(block.dataset.treatments || '[]'); } catch(e) {}
+                if (!checkedTreatments.length) checkedTreatments = treatmentData.map(t => t.name);
+                concurrentCount = parseInt(block.dataset.concurrent || '1');
             }
 
-            const dayNames = ['월', '화', '수', '목', '금', '토', '일'];
-            let startTime = '', endTime = '', title = '', dayIndex = 0, memo = '';
-
-            if (appointmentBlock) {
-                startTime = appointmentBlock.dataset.startTime;
-                endTime = appointmentBlock.dataset.endTime;
-                dayIndex = parseInt(appointmentBlock.dataset.dayIndex);
-                title = isEdit ? (appointmentBlock.dataset.title || selectedTreatmentName) : (appointmentBlock.dataset.title || selectedTreatmentName);
-                memo = appointmentBlock.dataset.memo || '';
-            }
-
-            // 기본값 설정 (블럭이 없을 때만)
-            if (!appointmentBlock) {
-                if (!startTime) startTime = '12:00';
-                if (!endTime) endTime = '14:00';
-            }
-
-            // 현재 선택된 진료항목 가져오기
-            const selectedTreatmentName = document.querySelector('.treatment-item-box.selected .treatment-name')?.textContent || '예방접종';
-            const displayTitle = title || selectedTreatmentName;
+            const dateText = getDateText(dayIndex);
+            const rName = 'cr_' + Date.now();
 
             popup.innerHTML = `
-                <div class="popup-content">
-                    <div class="form-section">
-                        <div class="section-label">진료항목</div>
-                        <div class="custom-select" data-field="treatment">
-                            <span class="custom-select-text">${displayTitle}</span>
-                            <svg class="custom-select-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M5 7.5L10 12.5L15 7.5" stroke="#959ba1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="form-section">
-                        <div class="section-label">설정 시간</div>
+                <div class="popup-top">
+                    <span class="popup-date-badge">${dateText}</span>
+                    <button class="popup-close-btn">✕</button>
+                </div>
+                <div class="popup-body">
+                    <div>
+                        <div class="popup-section-label">설정 시간</div>
                         <div class="time-setting-row">
                             <div class="time-setting-item" data-field="start-time">
                                 <span class="time-setting-text">${startTime}</span>
                                 <span class="time-setting-secondary">부터</span>
-                                <svg class="custom-select-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="#959ba1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <svg class="custom-select-icon" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
                             <div class="time-setting-item" data-field="end-time">
                                 <span class="time-setting-text">${endTime}</span>
                                 <span class="time-setting-secondary">까지</span>
-                                <svg class="custom-select-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="#959ba1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <svg class="custom-select-icon" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="form-section">
-                        <div class="section-label">진료시간</div>
-                        <div class="treatment-setting-row">
-                            <div class="treatment-setting-item" data-field="interval">
-                                <span class="treatment-setting-text">10분</span>
-                                <span class="treatment-setting-secondary">마다</span>
-                                <svg class="custom-select-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="#959ba1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="treatment-setting-item" data-field="capacity">
-                                <span class="treatment-setting-text">1명씩</span>
-                                <span class="treatment-setting-secondary">진료</span>
-                                <svg class="custom-select-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="#959ba1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
+
+                    <div>
+                        <div class="popup-section-label">예약 가능 진료항목</div>
+                        <div class="treatment-check-cards">
+                            ${treatmentData.map(t => `
+                                <label class="treatment-check-card ${checkedTreatments.includes(t.name) ? 'checked' : ''}">
+                                    <input type="checkbox" name="treatment_item" value="${t.name}" ${checkedTreatments.includes(t.name) ? 'checked' : ''}>
+                                    <span class="check-card-label">${t.name} ${t.duration}분</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="concurrent-label-row">
+                            <div class="popup-section-label" style="margin-bottom:0;">동시 예약</div>
+                            <span class="concurrent-note">같은 예약 시간에 여러 명을 받을 수 있어요.</span>
+                        </div>
+                        <div class="concurrent-radio-group">
+                            ${[1,2,3].map(n => `
+                                <label class="radio-item">
+                                    <input type="radio" name="${rName}" value="${n}" ${concurrentCount === n ? 'checked' : ''}>
+                                    <span>${n}명</span>
+                                </label>
+                            `).join('')}
                         </div>
                     </div>
                 </div>
-                
-                <div class="popup-action-area">
-                    <div class="action-error" style="visibility: hidden;">
-                        <svg class="error-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" fill="#f55251"/>
-                            <path d="M10 6V10" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M10 14H10.01" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        <span class="error-text">Error / 14R</span>
+
+                <div class="popup-footer">
+                    <div class="popup-error" id="popupError">
+                        <span class="popup-error-text" id="popupErrorText"></span>
                     </div>
-                    <div class="action-buttons">
-                        ${isEdit ? '<button class="action-button secondary delete-btn" id="deleteBtn" style="color: #f44336; border-color: #ffcdd2; background-color: #fffaf9;">삭제</button>' : ''}
-                        <button class="action-button secondary" id="cancelBtn">닫기</button>
-                        <button class="action-button primary" id="saveBtn">저장</button>
+                    <div class="popup-btn-row">
+                        ${isEdit ? '<button class="popup-delete-btn" id="deleteBtn">삭제</button>' : ''}
+                        <button class="popup-save-btn" id="saveBtn">저장</button>
                     </div>
                 </div>
             `;
 
-            if (isEdit) {
-                document.body.appendChild(popup);
+            // 위치 지정
+            if (block) {
+                const br = block.getBoundingClientRect();
+                const cr = document.querySelector('.scheduler-container').getBoundingClientRect();
+                const pw = 380, ph = 480;
+                let left = br.right - cr.left + 10;
+                let top = br.top - cr.top;
+                if (left + pw > cr.width) left = br.left - cr.left - pw - 10;
+                if (top + ph > cr.height) top = Math.max(0, cr.height - ph - 10);
+                popup.style.left = Math.max(0, left) + 'px';
+                popup.style.top = Math.max(0, top) + 'px';
             } else {
-                document.querySelector('.scheduler-container').appendChild(popup);
+                popup.style.left = '50%';
+                popup.style.top = '50%';
+                popup.style.transform = 'translate(-50%,-50%)';
             }
 
-            // 이벤트 리스너
-            const cancelBtn = popup.querySelector('#cancelBtn');
-            const saveBtn = popup.querySelector('#saveBtn');
-            const deleteBtn = popup.querySelector('#deleteBtn');
+            document.querySelector('.scheduler-container').appendChild(popup);
 
-            // 시간 설정 변수들
-            let currentStartTime = startTime;
-            let currentEndTime = endTime;
+            let curStart = startTime, curEnd = endTime;
 
-            function closePopup() {
-                // 이벤트 리스너 정리
-                document.removeEventListener('keydown', handleKeyDown);
-                document.removeEventListener('click', handleOutsideClick);
-
-                if (appointmentBlock && appointmentBlock.updatePopupTimes) {
-                    delete appointmentBlock.updatePopupTimes;
-                }
-
-                if (isEdit) {
-                    document.body.removeChild(popup);
-                } else {
-                    document.querySelector('.scheduler-container').removeChild(popup);
-                }
-            }
-
-            function cancelPopup() {
-                if (!isEdit && appointmentBlock) {
-                    appointmentBlock.remove();
-                }
-                closePopup();
-            }
-
-            // 시간 설정 드롭다운 이벤트
-            const startTimeItem = popup.querySelector('[data-field="start-time"]');
-            const endTimeItem = popup.querySelector('[data-field="end-time"]');
-
-            if (appointmentBlock) {
-                appointmentBlock.updatePopupTimes = function () {
-                    currentStartTime = appointmentBlock.dataset.startTime;
-                    currentEndTime = appointmentBlock.dataset.endTime;
-                    startTimeItem.querySelector('.time-setting-text').textContent = currentStartTime;
-                    endTimeItem.querySelector('.time-setting-text').textContent = currentEndTime;
+            // 팝업 시간 동기화
+            if (block) {
+                block.updatePopupTimes = function () {
+                    curStart = block.dataset.startTime;
+                    curEnd = block.dataset.endTime;
+                    popup.querySelector('[data-field="start-time"] .time-setting-text').textContent = curStart;
+                    popup.querySelector('[data-field="end-time"] .time-setting-text').textContent = curEnd;
                 };
             }
 
-            startTimeItem.addEventListener('click', function () {
-                const currentTime = this.querySelector('.time-setting-text').textContent;
-                const newTime = prompt('시작 시간을 입력하세요 (HH:MM)', currentTime);
-                if (newTime && /^\d{2}:\d{2}$/.test(newTime)) {
-                    const [hours, minutes] = newTime.split(':').map(Number);
-                    if (hours >= 8 && hours <= 19 && minutes >= 0 && minutes <= 59) {
-                        currentStartTime = newTime;
-                        this.querySelector('.time-setting-text').textContent = newTime;
-                    } else {
-                        alert('08:00 ~ 19:00 사이의 시간을 입력해주세요.');
-                    }
-                }
-            });
-
-            endTimeItem.addEventListener('click', function () {
-                const currentTime = this.querySelector('.time-setting-text').textContent;
-                const newTime = prompt('종료 시간을 입력하세요 (HH:MM)', currentTime);
-                if (newTime && /^\d{2}:\d{2}$/.test(newTime)) {
-                    const [hours, minutes] = newTime.split(':').map(Number);
-                    if (hours >= 8 && hours <= 19 && minutes >= 0 && minutes <= 59) {
-                        currentEndTime = newTime;
-                        this.querySelector('.time-setting-text').textContent = newTime;
-                    } else {
-                        alert('08:00 ~ 19:00 사이의 시간을 입력해주세요.');
-                    }
-                }
-            });
-
-            cancelBtn.addEventListener('click', cancelPopup);
-
-            // 팝업 클릭시 이벤트 전파 방지
-            popup.addEventListener('click', function (e) {
-                e.stopPropagation();
-            });
-
-            // 팝업 외부 클릭 시 닫기
-            function handleOutsideClick(e) {
-                if (!popup.contains(e.target)) {
-                    cancelPopup();
-                    document.removeEventListener('click', handleOutsideClick);
-                }
-            }
-
-            // ESC 키로 팝업 닫기
-            function handleKeyDown(e) {
-                if (e.key === 'Escape') {
-                    cancelPopup();
-                    document.removeEventListener('keydown', handleKeyDown);
-                    document.removeEventListener('click', handleOutsideClick);
-                }
-            }
-
-            document.addEventListener('keydown', handleKeyDown);
-
-            // 약간의 지연 후 외부 클릭 리스너 추가 (팝업 생성 클릭과 구분)
-            setTimeout(() => {
-                document.addEventListener('click', handleOutsideClick);
-            }, 100);
-
-            // 삭제 버튼 이벤트 (편집 모드일 때만 존재)
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', function () {
-                    if (appointmentBlock) {
-                        appointmentBlock.remove();
-                    }
-                    closePopup();
+            // 체크박스 카드 스타일 토글
+            popup.querySelectorAll('.treatment-check-card').forEach(card => {
+                card.querySelector('input').addEventListener('change', function () {
+                    card.classList.toggle('checked', this.checked);
                 });
+            });
+
+            function closePopup() {
+                document.removeEventListener('keydown', onKey);
+                document.removeEventListener('click', onOutside);
+                if (block && block.updatePopupTimes) delete block.updatePopupTimes;
+                popup.remove();
             }
 
-            saveBtn.addEventListener('click', function () {
-                const treatmentType = popup.querySelector('[data-field="treatment"] .custom-select-text').textContent;
-                const interval = popup.querySelector('[data-field="interval"] .treatment-setting-text').textContent;
-                const capacity = popup.querySelector('[data-field="capacity"] .treatment-setting-text').textContent;
+            function cancelPopup() {
+                if (!isEdit && block) block.remove();
+                closePopup();
+            }
 
-                // 시간 유효성 검사
-                if (currentStartTime >= currentEndTime) {
-                    const errorArea = popup.querySelector('.action-error');
-                    const errorText = popup.querySelector('.error-text');
-                    errorText.textContent = '종료 시간이 시작 시간보다 늦어야 합니다.';
-                    errorArea.style.visibility = 'visible';
+            // 시간 피커
+            popup.querySelector('[data-field="start-time"]').addEventListener('click', function () {
+                const t = prompt('시작 시간 (HH:MM)', curStart);
+                if (t && /^\d{2}:\d{2}$/.test(t)) {
+                    const [h, m] = t.split(':').map(Number);
+                    if (h >= 8 && h <= 21 && m >= 0 && m < 60) {
+                        curStart = t;
+                        this.querySelector('.time-setting-text').textContent = t;
+                    }
+                }
+            });
+
+            popup.querySelector('[data-field="end-time"]').addEventListener('click', function () {
+                const t = prompt('종료 시간 (HH:MM)', curEnd);
+                if (t && /^\d{2}:\d{2}$/.test(t)) {
+                    const [h, m] = t.split(':').map(Number);
+                    if (h >= 8 && h <= 21 && m >= 0 && m < 60) {
+                        curEnd = t;
+                        this.querySelector('.time-setting-text').textContent = t;
+                    }
+                }
+            });
+
+            popup.querySelector('.popup-close-btn').addEventListener('click', cancelPopup);
+            popup.addEventListener('click', e => e.stopPropagation());
+            popup.addEventListener('mousedown', e => e.stopPropagation());
+
+            function onOutside(e) { if (!popup.contains(e.target)) cancelPopup(); }
+            function onKey(e) { if (e.key === 'Escape') cancelPopup(); }
+            document.addEventListener('keydown', onKey);
+            setTimeout(() => document.addEventListener('click', onOutside), 100);
+
+            const deleteBtn = popup.querySelector('#deleteBtn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => { block?.remove(); closePopup(); });
+            }
+
+            popup.querySelector('#saveBtn').addEventListener('click', function () {
+                if (curStart >= curEnd) {
+                    popup.querySelector('#popupError').style.visibility = 'visible';
+                    popup.querySelector('#popupErrorText').textContent = '종료 시간이 시작 시간보다 늦어야 합니다.';
                     return;
                 }
-
-                if (appointmentBlock) {
-                    console.log('=== 팝업 저장 시작 ===');
-                    console.log('저장할 시간:', currentStartTime, '-', currentEndTime);
-
-                    // 시간을 콘텐츠 영역 상대 위치로 변환 (오프셋 없음)
-                    const newTop = timeToContentPixels(currentStartTime);
-                    const endPixels = timeToContentPixels(currentEndTime);
-                    const newHeight = Math.max(10, endPixels - newTop);
-
-                    console.log('변환된 픽셀:', 'newTop:', newTop, 'endPixels:', endPixels, 'newHeight:', newHeight);
-                    console.log('기존 블럭:', 'top:', appointmentBlock.style.top, 'height:', appointmentBlock.style.height);
-
-                    // 블럭 위치와 크기 업데이트
-                    appointmentBlock.style.top = newTop + 'px';
-                    appointmentBlock.style.height = newHeight + 'px';
-
-                    console.log('업데이트 후:', 'top:', appointmentBlock.style.top, 'height:', appointmentBlock.style.height);
-
-                    // 데이터 업데이트
-                    appointmentBlock.dataset.startTime = currentStartTime;
-                    appointmentBlock.dataset.endTime = currentEndTime;
-                    appointmentBlock.dataset.title = treatmentType;
-                    appointmentBlock.dataset.memo = `${interval} ${capacity}`;
-
-                    // 블럭 내용 업데이트
-                    updateBlockContent(appointmentBlock, newHeight);
+                const selected = [...popup.querySelectorAll('input[name="treatment_item"]:checked')].map(el => el.value);
+                if (!selected.length) {
+                    popup.querySelector('#popupError').style.visibility = 'visible';
+                    popup.querySelector('#popupErrorText').textContent = '진료항목을 하나 이상 선택해주세요.';
+                    return;
                 }
-
+                const concurrent = parseInt(popup.querySelector(`input[name="${rName}"]:checked`)?.value || '1');
+                if (block) {
+                    const newTop = timeToContentPixels(curStart);
+                    const newH = Math.max(10, timeToContentPixels(curEnd) - newTop);
+                    block.style.top = newTop + 'px';
+                    block.style.height = newH + 'px';
+                    block.dataset.startTime = curStart;
+                    block.dataset.endTime = curEnd;
+                    block.dataset.title = selected[0];
+                    block.dataset.treatments = JSON.stringify(selected);
+                    block.dataset.concurrent = String(concurrent);
+                    updateBlockContent(block, newH);
+                }
                 closePopup();
             });
         }
 
-        // 스케줄 그리드에 드래그 기능 추가
-        document.querySelectorAll('.day-column').forEach((column, columnIndex) => {
-            // 마우스 다운 이벤트
-            column.addEventListener('mousedown', function (e) {
-                // 블럭 이동 중이면 새 블럭 생성 방지
-                if (isMovingBlock) {
-                    return;
-                }
+        // ─── 그리드 호버 미리보기 ───
+        const hoverPreview = document.createElement('div');
+        hoverPreview.className = 'drag-preview';
+        hoverPreview.style.display = 'none';
+        hoverPreview.style.left = '8px';
+        hoverPreview.style.right = '8px';
+        hoverPreview.style.height = '20px';
+        hoverPreview.style.pointerEvents = 'none';
 
+        document.querySelectorAll('.day-column').forEach((column) => {
+            column.addEventListener('mousemove', function (e) {
+                if (isDragging || isMovingBlock) return;
                 if (e.target !== column && !e.target.classList.contains('hour-lines') && !e.target.classList.contains('hour-line') && !e.target.classList.contains('five-minute-line')) {
+                    hoverPreview.style.display = 'none';
                     return;
                 }
+                const rect = column.getBoundingClientRect();
+                const y = snapToFiveMinutes(e.clientY - rect.top);
+                if (hoverPreview.parentElement !== column) {
+                    hoverPreview.parentElement?.removeChild(hoverPreview);
+                    column.appendChild(hoverPreview);
+                }
+                hoverPreview.style.top = y + 'px';
+                hoverPreview.style.display = 'block';
+            });
+            column.addEventListener('mouseleave', function () {
+                hoverPreview.style.display = 'none';
+            });
+        });
+
+        // ─── 그리드 드래그 ───
+        document.querySelectorAll('.day-column').forEach((column, columnIndex) => {
+            column.addEventListener('mousedown', function (e) {
+                if (isMovingBlock) return;
+                hoverPreview.style.display = 'none';
+                if (e.target !== column && !e.target.classList.contains('hour-lines') && !e.target.classList.contains('hour-line') && !e.target.classList.contains('five-minute-line')) return;
 
                 e.preventDefault();
                 isDragging = true;
@@ -1744,286 +1311,145 @@
                 hasMoved = false;
 
                 const rect = column.getBoundingClientRect();
-                const rawY = e.clientY - rect.top;
-                dragStartY = snapToFiveMinutes(rawY); // 5분 단위로 스냅
-                dragStartX = e.clientX - rect.left;
+                dragStartY = snapToFiveMinutes(e.clientY - rect.top);
 
-                // 드래그 프리뷰 생성
                 dragPreview = document.createElement('div');
                 dragPreview.className = 'drag-preview';
                 dragPreview.style.left = '8px';
                 dragPreview.style.right = '8px';
                 dragPreview.style.top = dragStartY + 'px';
-                dragPreview.style.height = '10px'; // 최소 높이로 시작 (5분=10px)
+                dragPreview.style.height = '10px';
                 column.appendChild(dragPreview);
             });
 
-            // 마우스 무브 이벤트
             column.addEventListener('mousemove', function (e) {
                 if (!isDragging || currentColumn !== column) return;
-
                 e.preventDefault();
                 const rect = column.getBoundingClientRect();
-                const rawCurrentY = e.clientY - rect.top;
-                const currentY = snapToFiveMinutes(rawCurrentY); // 5분 단위로 스냅
-
-                // 움직임 감지
-                if (Math.abs(currentY - dragStartY) > 10) {
-                    hasMoved = true;
-                }
-
-                const top = Math.min(dragStartY, currentY);
-                const height = Math.abs(currentY - dragStartY);
-
+                const curY = snapToFiveMinutes(e.clientY - rect.top);
+                if (Math.abs(curY - dragStartY) > 10) hasMoved = true;
                 if (dragPreview) {
-                    dragPreview.style.top = top + 'px';
-                    dragPreview.style.height = Math.max(10, height) + 'px'; // 최소 10px (5분)
+                    dragPreview.style.top = Math.min(dragStartY, curY) + 'px';
+                    dragPreview.style.height = Math.max(10, Math.abs(curY - dragStartY)) + 'px';
                 }
             });
 
-            // 마우스 업 이벤트
             column.addEventListener('mouseup', function (e) {
                 if (!isDragging || currentColumn !== column) return;
-
                 e.preventDefault();
-                const clickDuration = Date.now() - dragStartTime;
+                const dur = Date.now() - dragStartTime;
+                const treatmentName = document.querySelector('.treatment-item-box.selected .treatment-name')?.textContent || treatmentData[0].name;
 
-                // 클릭 감지 (200ms 이내, 움직임 없음)
-                if (!hasMoved && clickDuration < 200) {
-                    // 클릭으로 5분 블럭 생성
-                    const selectedTreatmentName = document.querySelector('.treatment-item-box.selected .treatment-name')?.textContent || '예방접종';
-                    const newBlock = createAppointmentBlock(column, columnIndex, dragStartY, 10, selectedTreatmentName); // 5분 = 10px
-                    if (newBlock) {
-                        console.log('5분 블럭 생성 완료:', newBlock.dataset.startTime, '-', newBlock.dataset.endTime, '높이:', newBlock.style.height);
-                        // 팝업 표시 (우측에)
-                        setTimeout(() => showAppointmentPopup(newBlock, false), 100);
-                    }
+                if (!hasMoved && dur < 200) {
+                    const nb = createAppointmentBlock(column, columnIndex, dragStartY, 10, treatmentName);
+                    if (nb) setTimeout(() => showPopup(nb, false), 80);
                 } else {
-                    // 드래그로 블럭 생성
                     const rect = column.getBoundingClientRect();
-                    const rawEndY = e.clientY - rect.top;
-                    const endY = snapToFiveMinutes(rawEndY); // 5분 단위로 스냅
-
+                    const endY = snapToFiveMinutes(e.clientY - rect.top);
                     const top = Math.min(dragStartY, endY);
-                    const height = Math.max(10, Math.abs(endY - dragStartY)); // 최소 10px (5분)
-
-                    // 새 드래그 박스 생성
-                    if (height >= 10) { // 최소 크기 확인
-                        const selectedTreatmentName = document.querySelector('.treatment-item-box.selected .treatment-name')?.textContent || '예방접종';
-                        const newBlock = createAppointmentBlock(column, columnIndex, top, height, selectedTreatmentName);
-                        if (newBlock) {
-                            // 팝업 표시 (우측에)
-                            setTimeout(() => showAppointmentPopup(newBlock, false), 100);
-                        }
-                    }
+                    const height = Math.max(10, Math.abs(endY - dragStartY));
+                    const nb = createAppointmentBlock(column, columnIndex, top, height, treatmentName);
+                    if (nb) setTimeout(() => showPopup(nb, false), 80);
                 }
 
-                // 정리
-                if (dragPreview) {
-                    dragPreview.remove();
-                    dragPreview = null;
-                }
+                if (dragPreview) { dragPreview.remove(); dragPreview = null; }
                 isDragging = false;
                 currentColumn = null;
                 hasMoved = false;
             });
         });
 
-        // 전역 마우스 무브 및 마우스 업 이벤트 (드래그 중 마우스가 영역을 벗어날 때 대비)
+        // 전역 mousemove / mouseup
         document.addEventListener('mousemove', function (e) {
-            // 블럭 이동 드래그 처리
             if (isMovingBlock && movingBlock) {
                 e.preventDefault();
                 hasMoved = true;
-
-                // 어떤 컬럼 위에 있는지 찾기
-                const dayColumns = document.querySelectorAll('.day-column');
-                let targetColumn = null;
-                let targetColumnIndex = -1;
-
-                for (let i = 0; i < dayColumns.length; i++) {
-                    const columnRect = dayColumns[i].getBoundingClientRect();
-                    if (e.clientX >= columnRect.left && e.clientX <= columnRect.right) {
-                        targetColumn = dayColumns[i];
-                        targetColumnIndex = i;
-                        break;
-                    }
+                const cols = document.querySelectorAll('.day-column');
+                let tc = null;
+                for (let i = 0; i < cols.length; i++) {
+                    const r = cols[i].getBoundingClientRect();
+                    if (e.clientX >= r.left && e.clientX <= r.right) { tc = cols[i]; break; }
                 }
-
-                if (targetColumn) {
-                    const rect = targetColumn.getBoundingClientRect();
-                    const rawY = e.clientY - rect.top - dragStartY;
-                    const newTop = Math.max(0, snapToFiveMinutes(rawY));
-
-                    // 시간 범위 체크 (09:00-21:00)
-                    const maxTop = (21 - 9) * 60 * 2; // 720분 = 1440px
-                    const blockHeight = parseInt(movingBlock.style.height);
-
-                    if (newTop >= 0 && newTop + blockHeight <= maxTop) {
-                        // 미리보기 표시
-                        if (movePreview.parentElement !== targetColumn) {
-                            if (movePreview.parentElement) {
-                                movePreview.parentElement.removeChild(movePreview);
-                            }
-                            targetColumn.appendChild(movePreview);
+                if (tc) {
+                    const r = tc.getBoundingClientRect();
+                    const newTop = Math.max(0, snapToFiveMinutes(e.clientY - r.top - dragStartY));
+                    const bh = parseInt(movingBlock.style.height);
+                    if (newTop + bh <= (21 - 9) * 60 * 2) {
+                        if (movePreview.parentElement !== tc) {
+                            movePreview.parentElement?.removeChild(movePreview);
+                            tc.appendChild(movePreview);
                         }
-
                         movePreview.style.top = newTop + 'px';
                         movePreview.style.display = 'block';
-
-                        // 겹침 검사 (현재 이동 중인 블럭 제외)
-                        const hasOverlap = checkOverlap(targetColumn, newTop, blockHeight, movingBlock);
-
-                        if (hasOverlap) {
-                            movePreview.style.background = 'rgba(244, 67, 54, 0.3)';
-                            movePreview.style.borderColor = '#f44336';
-                        } else {
-                            movePreview.style.background = 'rgba(46, 125, 50, 0.3)';
-                            movePreview.style.borderColor = '#2e7d32';
-                        }
+                        const ov = checkOverlap(tc, newTop, bh, movingBlock);
+                        movePreview.style.background = ov ? 'rgba(244,67,54,0.3)' : 'rgba(0,0,0,0.06)';
+                        movePreview.style.borderColor = ov ? '#f44336' : '#999';
                     } else {
                         movePreview.style.display = 'none';
                     }
-                } else {
+                } else if (movePreview) {
                     movePreview.style.display = 'none';
                 }
                 return;
             }
-
-            // 기존 새 블럭 생성 드래그 처리
             if (!isDragging || !currentColumn || !dragPreview) return;
-
             const rect = currentColumn.getBoundingClientRect();
-            const rawCurrentY = e.clientY - rect.top;
-
-            // 영역을 벗어나면 드래그 중단
-            if (rawCurrentY < 0 || rawCurrentY > rect.height) {
-                return;
-            }
-
-            const currentY = snapToFiveMinutes(rawCurrentY); // 5분 단위로 스냅
-
-            // 움직임 감지
-            if (Math.abs(currentY - dragStartY) > 10) {
-                hasMoved = true;
-            }
-
-            const top = Math.min(dragStartY, currentY);
-            const height = Math.abs(currentY - dragStartY);
-
-            dragPreview.style.top = top + 'px';
-            dragPreview.style.height = Math.max(10, height) + 'px';
+            const rawY = e.clientY - rect.top;
+            if (rawY < 0 || rawY > rect.height) return;
+            const curY = snapToFiveMinutes(rawY);
+            if (Math.abs(curY - dragStartY) > 10) hasMoved = true;
+            dragPreview.style.top = Math.min(dragStartY, curY) + 'px';
+            dragPreview.style.height = Math.max(10, Math.abs(curY - dragStartY)) + 'px';
         });
 
         document.addEventListener('mouseup', function (e) {
-            // 블럭 이동 드래그 종료 처리
             if (isMovingBlock && movingBlock) {
                 e.preventDefault();
-
-                let moved = false;
-
                 if (movePreview && movePreview.style.display === 'block') {
-                    const targetColumn = movePreview.parentElement;
+                    const tc = movePreview.parentElement;
                     const newTop = parseInt(movePreview.style.top);
-                    const blockHeight = parseInt(movingBlock.style.height);
-
-                    // 겹침 재검사 (최종 확인)
-                    const hasOverlap = checkOverlap(targetColumn, newTop, blockHeight, movingBlock);
-
-                    if (!hasOverlap) {
-                        // 이동 성공
-                        const targetColumnIndex = Array.from(document.querySelectorAll('.day-column')).indexOf(targetColumn);
-
-                        // 원래 컬럼에서 제거
-                        if (movingBlock.parentElement !== targetColumn) {
-                            movingBlock.parentElement.removeChild(movingBlock);
-                            targetColumn.appendChild(movingBlock);
-                        }
-
-                        // 위치 및 데이터 업데이트
+                    const bh = parseInt(movingBlock.style.height);
+                    if (!checkOverlap(tc, newTop, bh, movingBlock)) {
+                        const tci = Array.from(document.querySelectorAll('.day-column')).indexOf(tc);
+                        if (movingBlock.parentElement !== tc) { movingBlock.parentElement.removeChild(movingBlock); tc.appendChild(movingBlock); }
                         movingBlock.style.top = newTop + 'px';
-                        movingBlock.dataset.dayIndex = targetColumnIndex;
-
-                        // 시간 데이터 업데이트  
-                        const startMinutes = contentPixelsToMinutes(newTop); // 콘텐츠 영역 상대 위치
-                        const durationMinutes = pixelsToDuration(blockHeight);
-                        const endMinutes = startMinutes + durationMinutes;
-
-                        movingBlock.dataset.startTime = minutesToTime(startMinutes);
-                        movingBlock.dataset.endTime = minutesToTime(endMinutes);
-
-                        // 블럭 내용 업데이트
-                        updateBlockContent(movingBlock, blockHeight);
+                        movingBlock.dataset.dayIndex = tci;
+                        const sm = contentPixelsToMinutes(newTop);
+                        movingBlock.dataset.startTime = minutesToTime(sm);
+                        movingBlock.dataset.endTime = minutesToTime(sm + pixelsToDuration(bh));
+                        updateBlockContent(movingBlock, bh);
                         if (movingBlock.updatePopupTimes) movingBlock.updatePopupTimes();
-
-                        moved = true;
-
-                        const dayNames = ['월', '화', '수', '목', '금', '토', '일'];
-                        console.log(`예약 이동: ${dayNames[targetColumnIndex]}요일 ${movingBlock.dataset.startTime} - ${movingBlock.dataset.endTime}`);
                     }
                 }
-
-                if (!moved) {
-                    // 이동 실패 - 원래 위치로 복귀
-                    console.log('겹치는 블럭이 있어 이동할 수 없습니다.');
-                }
-
-                // 상태 초기화
                 movingBlock.style.opacity = '1';
-                movingBlock.style.zIndex = '10';
-
-                if (movePreview) {
-                    if (movePreview.parentElement) {
-                        movePreview.parentElement.removeChild(movePreview);
-                    }
-                    movePreview = null;
-                }
-
+                movingBlock.style.zIndex = '20';
+                movePreview?.parentElement?.removeChild(movePreview);
+                movePreview = null;
                 isMovingBlock = false;
                 movingBlock = null;
                 originalPosition = null;
                 hasMoved = false;
                 return;
             }
-
-            // 기존 새 블럭 생성 드래그 종료 처리
             if (isDragging) {
-                if (dragPreview) {
-                    dragPreview.remove();
-                    dragPreview = null;
-                }
+                dragPreview?.remove();
+                dragPreview = null;
                 isDragging = false;
                 currentColumn = null;
                 hasMoved = false;
             }
         });
 
-        // 버튼 클릭 이벤트
-        document.querySelectorAll('.header-btn, .footer-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                console.log('Button clicked:', this.textContent);
-            });
-        });
-
-
-        // 헤더와 스케줄 그리드의 세로 라인을 맞추기 위해 스크롤바 너비만큼 헤더에 패딩 추가
         function syncHeaderPadding() {
-            const scheduleMain = document.querySelector('.schedule-main');
-            const dateHeaders = document.querySelector('.date-headers');
-            if (scheduleMain && dateHeaders) {
-                const scrollbarWidth = scheduleMain.offsetWidth - scheduleMain.clientWidth;
-                dateHeaders.style.paddingRight = scrollbarWidth + 'px';
-            }
+            const sm = document.querySelector('.schedule-main');
+            const dh = document.querySelector('.date-headers');
+            if (sm && dh) dh.style.paddingRight = (sm.offsetWidth - sm.clientWidth) + 'px';
         }
 
-        // 페이지 로드 시 및 창 크기 변경 시 패딩 동기화
         window.addEventListener('resize', syncHeaderPadding);
-        
-        // 페이지 로드 시 시간 라벨과 그리드 라인 생성
         generateTimeLabels();
         generateGridLines();
         syncHeaderPadding();
     </script>
 </body>
-
 </html>
